@@ -1,7 +1,12 @@
+"use client";
+//Next
 import Head from "next/head";
-import { Box, Typography } from "@mui/material";
+import Link from 'next/link';
 
-import Link from 'next/navigation';
+// MUI
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 
 export default function TarefasPage() {
   return (
@@ -11,15 +16,8 @@ export default function TarefasPage() {
         <meta name="description" content="Tela de tarefas" />
       </Head>
 
-      <Box
-        component="main"
-        sx={{
-          minHeight: "calc(100vh - 64px)",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <Typography component="h1" variant="h2">
+      <Box component="main">
+        <Typography component="h1" variant="h2" align="center">
           Tarefas
         </Typography>
       </Box>

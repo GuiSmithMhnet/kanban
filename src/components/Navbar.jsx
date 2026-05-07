@@ -1,26 +1,31 @@
+// Next
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
+
+// Mui material
 import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Toolbar from "@mui/material/Toolbar";
+
+// MUI Icons
+import CreateIcon from '@mui/icons-material/Create';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
-import {
-  Box,
-  Drawer,
-  IconButton,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-} from "@mui/material";
 
 export const drawerWidth = 240;
 const collapsedDrawerWidth = 72;
 
 const menuItems = [
   { label: "Tarefas", href: "/tarefas", icon: <AssignmentTurnedInOutlinedIcon /> },
+  { label: "Criar tarefa", href: "tarefas/criar", icon: <CreateIcon /> },
   { label: "Sobre", href: "/sobre", icon: <InfoOutlinedIcon /> },
 ];
 
