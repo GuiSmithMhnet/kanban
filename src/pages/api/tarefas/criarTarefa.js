@@ -19,6 +19,7 @@ const handler = async (req, res) => {
 
         const insert = buildInsert('tarefa', dadosForm);
         const tarefa = await db.query({text: insert.text, values: insert.values });
+        console.log("🚀 ~ handler ~ tarefa:", tarefa)
 
         return res.status(201).json(defaultResponse('Tarefa criada com sucesso', tarefa.rows[0]));
 

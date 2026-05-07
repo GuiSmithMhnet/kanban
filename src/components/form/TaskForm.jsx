@@ -1,15 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from "@mui/material/Typography";
+
+
+import dayjs from 'dayjs';
 
 export default function TaskForm({
   formTitle,
-  submitText,
+  buttons = [ <Button key='submitButton' variant='contained' type='submit' >Enviar</Button> ],
   initialValues = { titulo: "", descricao: "" },
   onSubmit,
 }) {
   const [values, setValues] = useState(initialValues);
+
+  const dateFormat = 'DD/MM/YYYY HH:mm:ss';
 
   const handleChange = (field) => (event) => {
     setValues((prev) => ({
@@ -33,11 +43,7 @@ export default function TaskForm({
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{
-        width: "100%",
-        maxWidth: 520,
-        mx: "auto",
-      }}
+      sx={{ width: "100%", maxWidth: 520, mx: "auto", }}
     >
       <Stack spacing={2.5}>
         <Typography component="h1" variant="h4" align='center'>
@@ -63,9 +69,27 @@ export default function TaskForm({
           minRows={4}
         />
 
-        <Button type="submit" variant="contained">
-          {submitText}
-        </Button>
+        <TextField
+          label="Cadastro"
+          name="data_cadastro"
+          value={values.data_cadastro ? dayjs(values.data_cadastro).format(dateFormat) : ''}
+          fullWidth
+          disabled
+          InputProps={{readOnly: true}}
+        />
+
+        <TextField
+          label="Atualização"
+          name="data_atualizacao"
+          value={values.data_atualizacao ? dayjs(values.data_atualizacao).format(dateFormat) : ''}
+          fullWidth
+          disabled
+          InputProps={{readOnly: true}}
+        />
+
+        <Stack direction='row' spacing={2}>
+          {buttons}
+        </Stack>
       </Stack>
     </Box>
   );

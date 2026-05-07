@@ -10,6 +10,7 @@ const buildInsert = (table, data) => {
       INSERT INTO ${table}
       (${columns})
       VALUES (${placeholders})
+      RETURNING *
     `,
     values,
   };
