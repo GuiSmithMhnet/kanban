@@ -1,7 +1,6 @@
 "use client";
 //Next
 import Head from "next/head";
-import Link from "next/link";
 import axios from 'axios';
 import dayjs from 'dayjs';
 
@@ -19,12 +18,12 @@ import Dialog from '@mui/material/Dialog';
 
 
 // React
-import { useEffect, useState } from 'react'; 
+import { useEffect, useState } from 'react';
 
+// UI Personalizado
 import Loading from '@/components/Loading';
-
 import TaskForm from "@/components/form/TaskForm";
-import { BorderAllRounded } from "@mui/icons-material";
+import { toast } from 'react-toastify';
 
 
 export default function TarefasPage() {
@@ -43,7 +42,7 @@ export default function TarefasPage() {
         setTarefas(res.data.data);
       } catch (error) {
         console.log(error);
-        alert(error);
+        toast.danger(error);
       } finally {
         setIsLoading(false);
       }
@@ -86,10 +85,10 @@ export default function TarefasPage() {
   const handleDeletarTarefa = async (id) => {
     try {
       const res = await axios.delete(`/api/tarefas/deletarTarefa?id=${id}`);
-      alert('Tarefa deletada!');
+      toast.success('Tarefa deletada');
     } catch (error) {
       console.log(error);
-      alert(error);
+      toast.danger(error);
     } finally {
       setIsModalOpen(false);
     }
@@ -103,10 +102,10 @@ export default function TarefasPage() {
   const submitNovaTarefa = async (values) => {
     try {
       const res = await axios.post('/api/tarefas/criarTarefa', values);
-      alert('Tarefa criada!');
+      toast.success('Tarefa criada');
     } catch (error) {
       console.log(error);
-      alert(error);
+      toast.error(error);
     } finally {
       setIsModalOpen(false);
     }
@@ -115,9 +114,9 @@ export default function TarefasPage() {
   const submitEditarTarefa = async (values) => {
     try {
         const res = await axios.put('/api/tarefas/editarTarefa', values);
-        alert('Tarefa editada!');
+        toast.success('Tarefa editada');
     } catch (error) {
-        console.log(error);
+        toast.error(error);
         alert(error);
     }
   }
