@@ -1,19 +1,13 @@
 services:
   kanban-app:
-    image: node:20-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: kanban-app
-    working_dir: /app
-    volumes:
-      - ./:/app
-    command: sh -c "npm run dev -- --webpack"
     ports:
       - "3001:3000"
     env_file:
       - .env
-    environment:
-      WATCHPACK_POLLING: true
-      CHOKIDAR_USEPOLLING: true
-      CHOKIDAR_INTERVAL: 1000
     depends_on:
       - postgresql
 
