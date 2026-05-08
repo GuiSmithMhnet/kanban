@@ -4,6 +4,14 @@ const Loading = ({ size = 64, className = '', label = 'Carregando...' }) => {
   return (
     <div
       className={`fixed inset-0 z-50 inline-flex items-center justify-center text-sky-600 ${className}`}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
       role='status'
       aria-live='polite'
       aria-label={label}
@@ -34,7 +42,7 @@ const Loading = ({ size = 64, className = '', label = 'Carregando...' }) => {
           />
         </circle>
       </svg>
-      <span className='sr-only'>{label}</span>
+      {/* <span className='sr-only'>{label}</span> */}
     </div>
   );
 };
