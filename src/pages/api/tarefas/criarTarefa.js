@@ -1,5 +1,5 @@
 import db from '@/pages/api/config/connectDB.js';
-import { buildInsert } from '@/pages/api/utils/db.js';
+import { buildInsert } from '@/pages/api/utils/buildInsert.js';
 
 import defaultResponse from '@/pages/api/config/defaultResponse.js';
 
