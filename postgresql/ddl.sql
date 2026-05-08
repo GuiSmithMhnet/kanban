@@ -41,3 +41,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_tarefa_insert_notify ON tarefa;
+DROP TRIGGER IF EXISTS trg_tarefa_update_notify ON tarefa;
+DROP TRIGGER IF EXISTS trg_tarefa_delete_notify ON tarefa;
+
+CREATE TRIGGER trg_tarefa_insert_notify
+AFTER INSERT ON tarefa
+FOR EACH ROW
+EXECUTE FUNCTION notify_tarefa_changes();
+
+CREATE TRIGGER trg_tarefa_update_notify
+AFTER UPDATE ON tarefa
+FOR EACH ROW
+EXECUTE FUNCTION notify_tarefa_changes();
+
+CREATE TRIGGER trg_tarefa_delete_notify
+AFTER DELETE ON tarefa
+FOR EACH ROW
+EXECUTE FUNCTION notify_tarefa_changes();
