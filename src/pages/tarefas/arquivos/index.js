@@ -62,7 +62,7 @@ const TarefaArquivos = ({ tarefa }) => {
                 onArquivoInserido={handleArquivoInserido}
             />
 
-            {!isLoading && <TarefaArquivosLista arquivos={arquivos} />}
+            {!isLoading && <TarefaArquivosLista arquivos={arquivos} setArquivos={setArquivos} />}
         </Stack>
     )
 }

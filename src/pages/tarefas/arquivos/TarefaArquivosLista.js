@@ -6,13 +6,23 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DownloadIcon from '@mui/icons-material/Download';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
+// Personalized UI
+import Table from '@/components/Table';
+import Loading from '@/components/Loading';
+
+// Utils
 import truncateString from '@/utils/truncateString';
 import { formatDateTime } from '@/utils/formatDate';
-import Table from '@/components/Table';
 
+// React
 import { toast } from 'react-toastify';
+import { useState } from 'react';
+import axios from 'axios';
 
-const TarefaArquivosLista = ({ arquivos }) => {
+const TarefaArquivosLista = ({ arquivos, setArquivos }) => {
+
+    const [isLoading, setIsLoading] = useState(false);
+
     const tableMaxStringLength = 25;
 
     const handleCopy = async (text) => {
@@ -30,7 +40,24 @@ const TarefaArquivosLista = ({ arquivos }) => {
         }
     };
 
-    const handleDelete = () => toast.info('Ainda não implementado');
+    const handleDelete = (id) => {
+        try {
+            if(!confirm('Tem certeza de que deseja deletar este arquivo?')) {
+                toast.info('Deleção cancelada');
+                return;
+            };
+            setIsLoading(true);
+            const urlParams = new URLSearchParams({ id });
+            const res = axios.delete(`/api/tarefas/arquivos/deletarArquivo?${urlParams.toString()}`);
+            setArquivos(prev => prev.filter(a => a.id !== id));
+            toast.success(res?.data?.mensagem || 'Arquivo deletado');
+        } catch (error) {
+            console.error(error);
+            toast.error(error?.data?.data?.mensagem || 'Erro ao deletar arquivo');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleDownload = (src) => toast.info('Ainda não implementado');
 
@@ -101,7 +128,10 @@ const TarefaArquivosLista = ({ arquivos }) => {
         }
     };
 
-    return <Table tableColumns={tableColumns} tableRowActions={tableRowActions} rows={arquivos} />;
+    return <>
+        <Table tableColumns={tableColumns} tableRowActions={tableRowActions} rows={arquivos} />
+        {isLoading ? <Loading /> : <></>}
+    </>;
 };
 
 export default TarefaArquivosLista;

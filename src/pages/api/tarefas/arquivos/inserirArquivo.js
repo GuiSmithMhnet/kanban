@@ -74,6 +74,7 @@ const handler = async (req, res) => {
         // Inserindo no BD
         const tarefaArquivoData = {
             id_tarefa: idTarefa,
+            id_opera: response.data.content.id,
             descricao,
             nome: arquivo.originalFilename,
             public_url: response.data.content.public_url
