@@ -1,4 +1,3 @@
-// Next
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -19,14 +18,16 @@ import HouseIcon from '@mui/icons-material/House';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 export const drawerWidth = 240;
 const collapsedDrawerWidth = 72;
 
 const menuItems = [
   { label: 'Início', href: '/', icon: <HouseIcon /> },
-  { label: "Tarefas", href: "/tarefas", icon: <AssignmentTurnedInOutlinedIcon /> },
   { label: "Sobre", href: "/sobre", icon: <InfoOutlinedIcon /> },
+  { label: "Tarefas", href: "/tarefas", icon: <AssignmentTurnedInOutlinedIcon /> },
+  { label: "Criar conta", href: '/usuarios/novo', icon: <PersonAddIcon /> },
 ];
 
 const Navbar = () => {
