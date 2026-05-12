@@ -16,4 +16,4 @@ const buildInsert = (table, data) => {
   };
 }
 
-export { buildInsert };
+export default buildInsert;
