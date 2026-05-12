@@ -1,6 +1,6 @@
-up-dev:
+dev-up:
 	docker compose up kanban-app-dev -d
-up-prod:
+prod-up:
 	docker compose up kanban-app -d --build
 down:
 	docker compose down
