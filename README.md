@@ -24,7 +24,10 @@ cp .env.example .env
  1. Preencha a chave `OPERA_API_KEY` de acordo com a chave `USER_API_KEY` do repositório de arquivos.
  2. Caso não vá usar docker no repositório de arquivos, altere a chave `OPERA_LINK` no .env
 ---
-## 5. Suba o projeto:
+## 5. Trocar `JWT_SECRET` no `.env`
+Altere para um que seja de sua vontade
+---
+## 6. Suba o projeto:
 No docker:
 ``` bash
 docker compose up kanban-app -d --build
@@ -36,5 +39,5 @@ npm run build
 npm start
 ```
 ---
-## 6. Fim
+## 7. Fim
 Acesse pela porta definida no docker-compose.yml do projeto (3001)
