@@ -15,9 +15,6 @@ const handler = async (req, res) => {
 
         const hasFiles = await db.query({ text: 'SELECT 1 FROM tarefa_arquivo WHERE id_tarefa = $1', values:[id] });
 
-        console.log(hasFiles.rowCount);
-        console.log(hasFiles.rows);
-
         if(hasFiles.rowCount > 0){
             return res.status(409).json(defaultResponse('Delete os arquivos antes de deletar as tarefas'));
         }
