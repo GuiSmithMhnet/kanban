@@ -4,6 +4,7 @@ const routes = {
     public: [
         '/',
         '/sobre',
+        '/documentacao'
     ],
     guest: [
         '/usuarios/login',
