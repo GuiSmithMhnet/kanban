@@ -21,6 +21,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 
 // Utils
 import hasRouteAcess from '@/utils/hasRouteAccess';
@@ -32,6 +33,7 @@ const menuItems = [
   { label: 'Início', href: '/', icon: <HouseIcon /> },
   { label: "Sobre", href: "/sobre", icon: <InfoOutlinedIcon /> },
   { label: "Tarefas", href: "/tarefas", icon: <AssignmentTurnedInOutlinedIcon /> },
+  { label: "Documentação", href: "/documentacao", icon: <MenuBookIcon /> },
   { label: "Criar conta", href: '/usuarios/novo', icon: <PersonAddIcon /> },
   { label: "Entrar", href: '/usuarios/login', icon: <LoginIcon /> },
   { label: 'Sair', href: '/usuarios/logout', icon: <LogoutIcon /> },
