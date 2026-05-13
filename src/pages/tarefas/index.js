@@ -188,3 +188,7 @@ export default function TarefasPage() {
     </>
   );
 }
+
+export const getServerSideProps = async () => ({
+  props: {},
+});

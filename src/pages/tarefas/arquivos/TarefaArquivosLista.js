@@ -136,3 +136,7 @@ const TarefaArquivosLista = ({ arquivos, setArquivos }) => {
 };
 
 export default TarefaArquivosLista;
+
+export const getServerSideProps = async () => ({
+  notFound: true,
+});

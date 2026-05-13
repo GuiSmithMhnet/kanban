@@ -89,3 +89,6 @@ const TarefaArquivoFormulario = ({ tarefaId, isLoading, setIsLoading, onArquivoI
 
 export default TarefaArquivoFormulario;
 
+export const getServerSideProps = async () => ({
+  notFound: true,
+});

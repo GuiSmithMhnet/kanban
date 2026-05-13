@@ -268,3 +268,7 @@ export default function DocumentacaoPage() {
     </>
   );
 }
+
+export const getServerSideProps = async () => ({
+  props: {},
+});

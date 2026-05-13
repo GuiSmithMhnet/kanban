@@ -21,3 +21,7 @@ export default function SobrePage() {
     </>
   );
 }
+
+export const getServerSideProps = async () => ({
+  props: {},
+});

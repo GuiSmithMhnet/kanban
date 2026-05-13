@@ -166,3 +166,7 @@ const TarefaFormulario = ({ mode = 'create', initialValues = { titulo: '', descr
 }
 
 export default TarefaFormulario;
+
+export const getServerSideProps = async () => ({
+  notFound: true,
+});

@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
+import Router from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -25,7 +25,6 @@ const defaultValues = {
 };
 
 export default function LoginUsuarioPage() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -53,8 +52,9 @@ export default function LoginUsuarioPage() {
 
       toast.success(res.data?.mensagem || "Login realizado.");
 
-      const redirectUrl = typeof router.query.redirectUrl === "string" ? router.query.redirectUrl : "/tarefas";
-      router.push(redirectUrl);
+      const params = new URLSearchParams(window.location.search);
+      const redirectUrl = params.get("redirectUrl") || "/tarefas";
+      Router.push(redirectUrl);
     } catch (error) {
       console.log(error.response || error);
       toast.error(error.response?.data?.mensagem || "Não foi possível realizar login.");
@@ -108,7 +108,7 @@ export default function LoginUsuarioPage() {
                   <Button variant="contained" color="success" type="submit" disabled={isLoading}>
                     {isLoading ? <CircularProgress size={24} color="inherit" /> : "Entrar"}
                   </Button>
-                  <Button variant="outlined" type="button" disabled={isLoading} onClick={() => router.back()}>
+                  <Button variant="outlined" type="button" disabled={isLoading} onClick={() => Router.back()}>
                     Voltar
                   </Button>
                 </Stack>
@@ -120,3 +120,7 @@ export default function LoginUsuarioPage() {
     </>
   );
 }
+
+export const getServerSideProps = async () => ({
+  props: {},
+});

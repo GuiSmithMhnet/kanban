@@ -12,6 +12,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
+import Tooltip from "@mui/material/Tooltip";
+import Divider from "@mui/material/Divider";
 
 // MUI Icons
 import HouseIcon from '@mui/icons-material/House';
@@ -22,9 +24,12 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 // Utils
 import hasRouteAcess from '@/utils/hasRouteAccess';
+import { useAppTheme } from "@/contexts/ThemeContext";
 
 export const drawerWidth = 240;
 const collapsedDrawerWidth = 72;
@@ -41,8 +46,11 @@ const menuItems = [
 
 const Navbar = () => {
   const router = useRouter();
+  const { mode, toggleTheme } = useAppTheme();
   const [collapsed, setCollapsed] = useState(JSON.parse(localStorage.getItem('kanban-toolbar-collapsed')) ?? false);
   const currentWidth = collapsed ? collapsedDrawerWidth : drawerWidth;
+  const isDarkMode = mode === 'dark';
+  const themeButtonLabel = isDarkMode ? 'Ativar modo claro' : 'Ativar modo escuro';
 
   useEffect(() => { localStorage.setItem('kanban-toolbar-collapsed', JSON.stringify(collapsed)) },[collapsed]);
 
@@ -57,6 +65,8 @@ const Navbar = () => {
           boxSizing: "border-box",
           overflowX: "hidden",
           transition: "width 0.2s ease",
+          display: "flex",
+          flexDirection: "column",
         },
       }}
     >
@@ -70,7 +80,7 @@ const Navbar = () => {
           {collapsed ? <MenuIcon /> : <ChevronLeftIcon />}
         </IconButton>
       </Toolbar>
-      <List>
+      <List sx={{ flexGrow: 1 }}>
         {menuItems.filter(item => hasRouteAcess(item.href) === true).map((item) => (
           <ListItemButton
             key={item.href}
@@ -98,6 +108,33 @@ const Navbar = () => {
           </ListItemButton>
         ))}
       </List>
+      <Divider />
+      <Box sx={{ p: 1 }}>
+        <Tooltip title={themeButtonLabel} placement="right">
+          <ListItemButton
+            onClick={toggleTheme}
+            sx={{
+              minHeight: 48,
+              justifyContent: collapsed ? "center" : "initial",
+              px: 2,
+              borderRadius: 1,
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 0,
+                mr: collapsed ? 0 : 2,
+                justifyContent: "center",
+              }}
+            >
+              {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            </ListItemIcon>
+            <Box sx={{ opacity: collapsed ? 0 : 1, width: collapsed ? 0 : "auto", transition: "opacity 0.2s ease" }}>
+              <ListItemText primary={themeButtonLabel} />
+            </Box>
+          </ListItemButton>
+        </Tooltip>
+      </Box>
     </Drawer>
   );
 };

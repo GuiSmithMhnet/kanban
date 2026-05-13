@@ -1,7 +1,7 @@
 "use client";
 
 import Head from "next/head";
-import { useRouter } from "next/router";
+import Router from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -24,7 +24,6 @@ const defaultValues = {
 };
 
 export default function NovoUsuarioPage() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -122,7 +121,7 @@ export default function NovoUsuarioPage() {
               <Button variant="contained" color="success" type="submit" disabled={isLoading}>
                 {isLoading ? <CircularProgress size={24} color="inherit" /> : "Cadastrar"}
               </Button>
-              <Button variant="outlined" type="button" disabled={isLoading} onClick={() => router.back()}>
+              <Button variant="outlined" type="button" disabled={isLoading} onClick={() => Router.back()}>
                 Voltar
               </Button>
             </Stack>
@@ -132,3 +131,7 @@ export default function NovoUsuarioPage() {
     </>
   );
 }
+
+export const getServerSideProps = async () => ({
+  props: {},
+});

@@ -70,3 +70,7 @@ const TarefaArquivos = ({ tarefa }) => {
 }
 
 export default TarefaArquivos;
+
+export const getServerSideProps = async () => ({
+  notFound: true,
+});

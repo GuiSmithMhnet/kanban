@@ -8,7 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 // React / Next
 import { ToastContainer } from 'react-toastify';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
+import Router from 'next/router';
 import { useState, useEffect } from 'react';
 
 // Utils
@@ -17,22 +17,28 @@ import hasRouteAccess from "@/utils/hasRouteAccess";
 // Componentes
 const Navbar = dynamic(() => import('@/components/Navbar'), { ssr: false });
 import Loading from '@/components/Loading';
+import { AppThemeProvider } from '@/contexts/ThemeContext';
 
 export default function App({ Component, pageProps }) {
-
-  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const auth = () => {
-      if(!hasRouteAccess(router.pathname)){
-        router.replace('/');
+    const auth = (url = window.location.pathname) => {
+      const pathname = url.split('?')[0];
+
+      if(!hasRouteAccess(pathname)){
+        Router.replace('/');
       }
     };
 
     auth();
-  },[router.pathname]);
+    Router.events.on('routeChangeComplete', auth);
+
+    return () => {
+      Router.events.off('routeChangeComplete', auth);
+    };
+  },[]);
 
   const renderPage = () => {
     if (isLoading) return <Loading />;
@@ -49,8 +55,10 @@ export default function App({ Component, pageProps }) {
   }
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      {renderPage()}
-    </Box>
+    <AppThemeProvider>
+      <Box sx={{ display: "flex", minHeight: "100vh" }}>
+        {renderPage()}
+      </Box>
+    </AppThemeProvider>
   );
 }

@@ -1,13 +1,17 @@
+import { useEffect } from 'react';
 import Router from 'next/router';
-import { toast } from 'react-toastify';
 
-const logout = () => {
-
-    if(typeof window !== 'undefined'){
-        localStorage.removeItem('kanban-token');
-    }
-
+const Logout = () => {
+  useEffect(() => {
+    localStorage.removeItem('kanban-token');
     Router.replace('/usuarios/login');
-}
+  }, []);
 
-export default logout;
+  return null;
+};
+
+export default Logout;
+
+export const getServerSideProps = async () => ({
+  props: {},
+});
