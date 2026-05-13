@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import authAxios from '@/utils/authAxios';
 import { toast } from 'react-toastify';
 
 const TarefaArquivoFormulario = ({ tarefaId, isLoading, setIsLoading, onArquivoInserido }) => {
@@ -30,11 +30,7 @@ const TarefaArquivoFormulario = ({ tarefaId, isLoading, setIsLoading, onArquivoI
             form.append('arquivo', arquivo);
             form.append('id_tarefa', tarefaId);
 
-            const res = await axios.post('/api/tarefas/arquivos/inserirArquivo', form, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            const res = await authAxios('post','/api/tarefas/arquivos/inserirArquivo', form, {}, 'multipart/form-data');
 
             toast.success('Arquivo inserido');
             onArquivoInserido?.(res.data.data);

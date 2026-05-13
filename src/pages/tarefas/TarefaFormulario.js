@@ -1,10 +1,8 @@
-"use client";
-
 // React/JS
 import { useState } from "react";
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
-import axios from 'axios';
+import { useForm } from 'react-hook-form';
 
 // MUI
 import Box from '@mui/material/Box';
@@ -17,32 +15,25 @@ import Typography from "@mui/material/Typography";
 import Loading from '@/components/Loading';
 import TarefaArquivos from "@/pages/tarefas/arquivos";
 
+// Utils
+import authAxios from "@/utils/authAxios";
 
-const TarefaFormulario = ({
-  mode = 'create',
-  initialValues = { titulo: "", descricao: "" },
-  onClose,
-}) => {
-  const [values, setValues] = useState(initialValues);
+const TarefaFormulario = ({ mode = 'create', initialValues = { titulo: '', descricao: '' }, onClose }) => {
+
+  const { register, handleSubmit, getValues } = useForm({ defaultValues: initialValues });
+
   const [isLoading, setIsLoading] = useState(false);
 
   const dateFormat = 'DD/MM/YYYY HH:mm:ss';
 
-  const handleChange = (field) => (event) => {
-    setValues((prev) => ({
-      ...prev,
-      [field]: event.target.value,
-    }));
-  };
-
-  const criarTarefa = async (values) => {
+  const criarTarefa = async (data) => {
     try {
       setIsLoading(true);
-      const res = await axios.post('/api/tarefas/criarTarefa', values);
+      const res = await authAxios('post','/api/tarefas/criarTarefa', data);
       toast.success('Tarefa criada');
       return true;
     } catch (error) {
-      console.log(error.response);
+      console.log(error?.response ?? error);
       toast.error(error.response?.data?.mensagem || 'Erro ao inserir tarefa');
       return false;
     } finally {
@@ -50,10 +41,10 @@ const TarefaFormulario = ({
     }
   };
 
-  const editarTarefa = async (values) => {
+  const editarTarefa = async (data) => {
     try {
       setIsLoading(true);
-      const res = await axios.put('/api/tarefas/editarTarefa', values);
+      const res = await authAxios('put','/api/tarefas/editarTarefa', data);
       toast.success('Tarefa editada');
       return true;
     } catch (error) {
@@ -68,8 +59,12 @@ const TarefaFormulario = ({
   const handleDeletarTarefa = async () => {
     try {
       if(!confirm("Deseja mesmo deletar a tarefa?")) return;
+
+      const id = getValues('id');
+      if(!id) return;
+      
       setIsLoading(true);
-      const res = await axios.delete(`/api/tarefas/deletarTarefa?id=${values.id}`);
+      const res = await authAxios('delete',`/api/tarefas/deletarTarefa?id=${id}`);
       toast.success('Tarefa deletada');
       onClose();
       return true;
@@ -93,16 +88,14 @@ const TarefaFormulario = ({
     ]
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const onSubmit = async (data) => {
     switch(mode) {
       case 'create':
-        const createOk = await criarTarefa(values);
+        const createOk = await criarTarefa(data);
         if(createOk) onClose();
         break;
       case 'edit':
-        const editOk = await editarTarefa(values);
+        const editOk = await editarTarefa(data);
         if(editOk) onClose();
         break;
       default:
@@ -125,8 +118,7 @@ const TarefaFormulario = ({
         <TextField
           label="Título"
           name="titulo"
-          value={values.titulo}
-          onChange={handleChange("titulo")}
+          { ...register("titulo") }
           fullWidth
           required
         />
@@ -134,8 +126,7 @@ const TarefaFormulario = ({
         <TextField
           label="Descrição"
           name="descricao"
-          value={values.descricao}
-          onChange={handleChange("descricao")}
+          { ...register('descricao') }
           fullWidth
           required
           multiline
@@ -145,7 +136,7 @@ const TarefaFormulario = ({
         <TextField
           label="Cadastro"
           name="data_cadastro"
-          value={values.data_cadastro ? dayjs(values.data_cadastro).format(dateFormat) : ''}
+          value={getValues('data_cadastro') ? dayjs(getValues('data_cadastro')).format(dateFormat) : ''}
           fullWidth
           disabled
         />
@@ -153,7 +144,7 @@ const TarefaFormulario = ({
         <TextField
           label="Atualização"
           name="data_atualizacao"
-          value={values.data_atualizacao ? dayjs(values.data_atualizacao).format(dateFormat) : ''}
+          value={getValues('data_atualizacao') ? dayjs(getValues('data_atualizacao')).format(dateFormat) : ''}
           fullWidth
           disabled
         />
@@ -164,10 +155,10 @@ const TarefaFormulario = ({
   return (
     <Box sx={{ width: "100%", mx: "auto", }} >
       <Stack spacing={2.5}>
-        <form onSubmit={handleSubmit} >
+        <form onSubmit={handleSubmit(onSubmit)} >
           {renderizarFormulario()}
         </form>
-        {mode !== 'create' ? <TarefaArquivos tarefa={ values } /> : <></>}
+        {mode !== 'create' ? <TarefaArquivos tarefa={ getValues() } /> : <></>}
         {isLoading ? <Loading /> : <></>}
       </Stack>
     </Box>

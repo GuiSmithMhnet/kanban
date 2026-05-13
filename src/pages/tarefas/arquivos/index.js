@@ -4,13 +4,15 @@ import Stack from '@mui/material/Stack';
 
 // Personalized UI
 import Loading from '@/components/Loading';
-
 import TarefaArquivoFormulario from './TarefaArquivoFormulario';
 import TarefaArquivosLista from './TarefaArquivosLista';
 
+// React Next
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { toast } from 'react-toastify';
+
+// Utils
+import authAxios from '@/utils/authAxios';
 
 const TarefaArquivos = ({ tarefa }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +29,7 @@ const TarefaArquivos = ({ tarefa }) => {
                 const urlSearchParams = new URLSearchParams(params);
                 const url = `/api/tarefas/arquivos/listarArquivos?${urlSearchParams.toString()}`;
 
-                const resArquivos = await axios.get(url);
+                const resArquivos = await authAxios('get', url);
 
                 setArquivos(resArquivos.data.data);
 

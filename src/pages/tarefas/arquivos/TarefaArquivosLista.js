@@ -13,11 +13,12 @@ import Loading from '@/components/Loading';
 // Utils
 import truncateString from '@/utils/truncateString';
 import { formatDateTime } from '@/utils/formatDate';
+import authAxios from '@/utils/authAxios';
 
 // React
 import { toast } from 'react-toastify';
 import { useState } from 'react';
-import axios from 'axios';
+
 
 const TarefaArquivosLista = ({ arquivos, setArquivos }) => {
 
@@ -48,7 +49,7 @@ const TarefaArquivosLista = ({ arquivos, setArquivos }) => {
             };
             setIsLoading(true);
             const urlParams = new URLSearchParams({ id });
-            const res = await axios.delete(`/api/tarefas/arquivos/deletarArquivo?${urlParams.toString()}`);
+            const res = await authAxios('delete',`/api/tarefas/arquivos/deletarArquivo?${urlParams.toString()}`);
             setArquivos(prev => prev.filter(a => a.id !== id));
             toast.success(res?.data?.mensagem || 'Arquivo deletado');
         } catch (error) {

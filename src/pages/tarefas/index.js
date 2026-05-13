@@ -1,5 +1,4 @@
-"use client";
-//Next
+// Next
 import Head from "next/head";
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -25,6 +24,8 @@ import Loading from '@/components/Loading';
 import TarefaFormulario from "@/pages/tarefas/TarefaFormulario";
 import { toast } from 'react-toastify';
 
+// Utils
+import authAxios from "@/utils/authAxios";
 
 export default function TarefasPage() {
   const [tarefas, setTarefas] = useState([]);
@@ -68,7 +69,7 @@ export default function TarefasPage() {
     const fetchTarefas = async () => {
       try {
         setIsLoading(true);
-        const res = await axios.post('/api/tarefas/listarTarefas');
+        const res = await authAxios('post','/api/tarefas/listarTarefas');
         setTarefas(res.data.data);
       } catch (error) {
         console.log(error.response);

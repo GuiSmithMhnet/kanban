@@ -1,5 +1,3 @@
-"use client";
-
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -17,6 +15,9 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
 import axios from "axios";
+
+import setToken from '@/utils/setToken';
+import getToken from '@/utils/getToken';
 
 const defaultValues = {
   login: "",
@@ -44,7 +45,12 @@ export default function LoginUsuarioPage() {
         return;
       }
 
-      localStorage.setItem("kanban-token", token);
+      const tokenStored = setToken(token);
+      if(!tokenStored){
+        toast.error('Erro ao salvar token. Contate o suporte!');
+        return;
+      }
+
       toast.success(res.data?.mensagem || "Login realizado.");
 
       const redirectUrl = typeof router.query.redirectUrl === "string" ? router.query.redirectUrl : "/tarefas";

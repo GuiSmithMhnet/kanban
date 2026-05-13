@@ -7,7 +7,6 @@ const logout = () => {
         localStorage.removeItem('kanban-token');
     }
 
-    toast.success('Logout realizado');
     Router.replace('/usuarios/login');
 }
 
