@@ -20,15 +20,19 @@ import LoginIcon from "@mui/icons-material/Login";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import PaletteIcon from "@mui/icons-material/Palette";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SyncIcon from "@mui/icons-material/Sync";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 
 const acceptedExtensions = ["pdf", "jpg", "png", "jpeg"];
+const acceptedProfileImageExtensions = ["png", "jpg", "jpeg", "webp"];
 
 const messages = [
   "Espaço criado",
   "Espaço editado",
+  "Perfil editado",
+  "Imagem atualizada com sucesso",
   "Tarefa criada",
   "Tarefa editada",
   "Tarefa deletada",
@@ -133,6 +137,49 @@ export default function DocumentacaoPage() {
                 <Typography variant="body1">
                   Você pode entrar usando seu username ou e-mail junto com a senha. Após o login, o sistema direciona
                   você para a documentação, a menos que exista um redirecionamento específico na tela acessada antes.
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <SectionTitle icon={<AccountCircleIcon color="primary" />} title="Perfil" />
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Usuários logados podem acessar a tela Perfil pelo menu lateral. Nessa tela, você pode visualizar e
+                  editar seus dados básicos:
+                </Typography>
+                <BulletList items={["nome", "e-mail", "username"]} />
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Regras visíveis no perfil:
+                </Typography>
+                <BulletList
+                  items={[
+                    "Nome, e-mail e username são obrigatórios.",
+                    "O e-mail deve ter um formato válido.",
+                    "O e-mail não pode estar duplicado.",
+                    "O username deve conter apenas letras, números e underline.",
+                    "O username não pode estar duplicado.",
+                    "Senha e permissões não são alteradas pela tela de perfil.",
+                  ]}
+                />
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  A imagem de perfil também pode ser alterada. Clique no avatar, escolha Trocar imagem e salve a nova
+                  imagem.
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Extensões aceitas para imagem de perfil:
+                </Typography>
+                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 2 }}>
+                  {acceptedProfileImageExtensions.map((extension) => (
+                    <Chip key={extension} label={extension} color="primary" variant="outlined" />
+                  ))}
+                </Stack>
+                <Typography variant="body1">
+                  Tamanho máximo permitido: <strong>5 MB</strong>.
                 </Typography>
               </AccordionDetails>
             </Accordion>
@@ -252,8 +299,10 @@ export default function DocumentacaoPage() {
                 <BulletList
                   items={[
                     "Visitantes podem acessar Início, Sobre, Documentação, Criar conta e Entrar.",
-                    "Usuários logados podem acessar Início, Sobre, Espaços, Documentação e Sair.",
+                    "Usuários logados podem acessar Perfil, Início, Sobre, Espaços, Documentação e Sair.",
+                    "O item Perfil mostra a imagem do usuário quando existe uma imagem cadastrada.",
                     "O menu lateral pode ser recolhido e essa escolha fica salva no navegador.",
+                    "A lista de espaços do menu pode ser expandida ou recolhida.",
                     "O botão de tema alterna entre modo claro e escuro e também salva a escolha no navegador.",
                   ]}
                 />
