@@ -64,7 +64,7 @@ const Navbar = () => {
   const router = useRouter();
   const { mode, toggleTheme } = useAppTheme();
   const [collapsed, setCollapsed] = useState(getInitialCollapsed);
-  const [spacesOpen, setSpacesOpen] = useState(true);
+  const [spacesOpen, setSpacesOpen] = useState(false);
   const [espacos, setEspacos] = useState([]);
   const [perfil, setPerfil] = useState(null);
   const [isEspacosLoading, setIsEspacosLoading] = useState(false);
