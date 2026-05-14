@@ -46,17 +46,19 @@ export default function EspacosPage() {
   const { id } = router.query;
 
   const [activeTab, setActiveTab] = useState(0);
-  const [space, setSpace] = useState({});
+  const [space, setSpace] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
-        if (!id) return;
+        if (!id) {
+          setSpace(null);
+          return;
+        }
         setIsLoading(true);
         const params = new URLSearchParams({ id });
         const res = await authAxios('get', `/api/espacos/selecionarEspaco?${params.toString()}`);
-        console.log(res.data);
         setSpace(res.data.data);
       } catch (error) {
         console.log(error?.response || error);
@@ -99,7 +101,7 @@ export default function EspacosPage() {
         </Box>
 
         <TabPanel value={activeTab} index={0}>
-          <EspacoFormulario modo="create" initialValues={space} />
+          <EspacoFormulario modo={space ? 'edit' : 'create'} initialValues={space} />
         </TabPanel>
 
         <TabPanel value={activeTab} index={1}>

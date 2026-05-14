@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -26,12 +26,9 @@ const defaultValues = {
 const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: { ...defaultValues, ...initialValues } });
+  const { control, register, handleSubmit, reset, formState: { errors } } = useForm({ defaultValues: initialValues });
+
+  useEffect(() => { reset(initialValues ? initialValues : defaultValues) },[initialValues]);
 
   const onSubmit = async (data) => {
     try {
@@ -109,7 +106,7 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
           disabled={isLoading}
           error={!!errors.nome}
           helperText={errors.nome?.message}
-          inputProps={{ maxLength: 50 }}
+          slotProps={{ inputLabel: { shrink: true } }}
           {...register('nome', {
             required: 'Nome é obrigatório.',
             maxLength: {
@@ -126,7 +123,7 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
           disabled={isLoading}
           error={!!errors.sigla}
           helperText={errors.sigla?.message}
-          inputProps={{ maxLength: 2 }}
+          slotProps={{ inputLabel: { shrink: true } }}
           {...register('sigla', {
             required: 'Sigla é obrigatória.',
             validate: (value) => value.length === 2 || 'Sigla deve ter exatamente 2 caracteres.',
@@ -142,7 +139,7 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
           disabled={isLoading}
           error={!!errors.descricao}
           helperText={errors.descricao?.message}
-          inputProps={{ maxLength: 255 }}
+          slotProps={{ inputLabel: { shrink: true } }}
           {...register('descricao', {
             required: 'Descrição é obrigatória.',
             maxLength: {
