@@ -167,6 +167,11 @@ export default function DocumentacaoPage() {
                 />
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body1" sx={{ mb: 1 }}>
+                  A aba Espaços inativos lista os espaços que foram desativados. Eles não aparecem na Navbar, mas podem
+                  ser abertos pela lista para consulta ou edição.
+                </Typography>
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="body1" sx={{ mb: 1 }}>
                   A imagem de perfil também pode ser alterada. Clique no avatar, escolha Trocar imagem e salve a nova
                   imagem.
                 </Typography>
@@ -193,7 +198,7 @@ export default function DocumentacaoPage() {
                   Espaços são áreas usadas para agrupar tarefas. Na tela de espaços, você pode criar e editar espaços
                   informando:
                 </Typography>
-                <BulletList items={["ícone", "nome", "sigla", "descrição"]} />
+                <BulletList items={["ícone", "nome", "sigla", "descrição", "status ativo ou inativo"]} />
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body1" sx={{ mb: 1 }}>
                   Regras visíveis no cadastro de espaços:
@@ -204,10 +209,13 @@ export default function DocumentacaoPage() {
                     "O nome deve ter no máximo 50 caracteres.",
                     "A sigla deve ter exatamente 2 caracteres.",
                     "A descrição deve ter no máximo 255 caracteres.",
+                    "Ao salvar um espaço como inativo, o sistema pede confirmação.",
+                    "Espaços inativos deixam de aparecer na Navbar.",
                   ]}
                 />
                 <Alert severity="info" sx={{ mt: 2 }}>
-                  O menu lateral mostra a opção Espaços e, quando houver espaços cadastrados, exibe atalhos para eles.
+                  O menu lateral mostra a opção Espaços e, quando houver espaços ativos cadastrados, exibe atalhos para
+                  eles.
                 </Alert>
               </AccordionDetails>
             </Accordion>
@@ -302,7 +310,7 @@ export default function DocumentacaoPage() {
                     "Usuários logados podem acessar Perfil, Início, Sobre, Espaços, Documentação e Sair.",
                     "O item Perfil mostra a imagem do usuário quando existe uma imagem cadastrada.",
                     "O menu lateral pode ser recolhido e essa escolha fica salva no navegador.",
-                    "A lista de espaços do menu pode ser expandida ou recolhida.",
+                    "A lista de espaços ativos do menu pode ser expandida ou recolhida.",
                     "O botão de tema alterna entre modo claro e escuro e também salva a escolha no navegador.",
                   ]}
                 />
@@ -358,7 +366,7 @@ export default function DocumentacaoPage() {
                   items={[
                     "A página inicial ainda não possui conteúdo.",
                     "A página Sobre ainda é simples.",
-                    "A tela de espaços não possui botão de exclusão de espaço.",
+                    "A tela de espaços não possui exclusão definitiva de espaço; espaços podem ser inativados.",
                     "A ação de copiar tarefa ainda não está implementada.",
                   ]}
                 />

@@ -18,12 +18,13 @@ const handler = async (req, res) => {
       descricao: 'Descrição',
       sigla: 'Sigla',
       icon: 'Ícone',
+      ativo: 'Ativo',
     };
     const data = {};
-    const { id, nome, descricao, sigla, icon } = dadosForm;
+    const { id, nome, descricao, sigla, icon, ativo } = dadosForm;
 
     for (const requiredKey in requiredData) {
-      if (!dadosForm[requiredKey]) {
+      if (dadosForm[requiredKey] === undefined || dadosForm[requiredKey] === null || dadosForm[requiredKey] === '') {
         console.log('chave faltante: ', requiredKey);
         return res.status(400).json(defaultResponse('Preencha todos os dados para continuar'));
       }
@@ -33,6 +34,10 @@ const handler = async (req, res) => {
 
     if (!Number.isInteger(Number(id))) {
       return res.status(400).json(defaultResponse('ID inválido'));
+    }
+
+    if (typeof ativo !== 'boolean') {
+      return res.status(400).json(defaultResponse('Ativo deve ser verdadeiro ou falso'));
     }
 
     const dbColumns = await getTableColumns(tableName);
@@ -65,12 +70,13 @@ const handler = async (req, res) => {
       SET nome = $1,
         descricao = $2,
         sigla = $3,
-        icon = $4
-      WHERE id = $5 AND id_usuario = $6
+        icon = $4,
+        ativo = $5
+      WHERE id = $6 AND id_usuario = $7
       RETURNING *
     `;
 
-    const espaco = await db.query({ text: sql, values: [nome, descricao, sigla, icon, id, user.id] });
+    const espaco = await db.query({ text: sql, values: [nome, descricao, sigla, icon, ativo, id, user.id] });
 
     if (espaco.rowCount === 0) {
       return res.status(404).json(defaultResponse('Espaço não encontrado!'));

@@ -8,10 +8,12 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import WorkspacesIcon from '@mui/icons-material/Workspaces';
 
 import Loading from '@/components/Loading';
 import authAxios from '@/utils/authAxios';
 import PerfilFormulario from './PerfilFormulario';
+import EspacosInativosLista from './EspacosInativosLista';
 
 const TabPanel = ({ children, index, value }) => (
   <Box
@@ -79,11 +81,16 @@ export default function PerfilPage() {
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={activeTab} onChange={handleTabChange} aria-label="Abas da tela de perfil">
             <Tab icon={<AccountCircleIcon />} iconPosition="start" label="Perfil" {...getTabProps(0)} />
+            <Tab icon={<WorkspacesIcon />} iconPosition="start" label="Espaços inativos" {...getTabProps(1)} />
           </Tabs>
         </Box>
 
         <TabPanel value={activeTab} index={0}>
           <PerfilFormulario mode="edit" initialValues={perfil} onPerfilAtualizado={setPerfil} />
+        </TabPanel>
+
+        <TabPanel value={activeTab} index={1}>
+          <EspacosInativosLista />
         </TabPanel>
       </Stack>
     </>

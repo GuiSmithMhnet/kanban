@@ -57,7 +57,7 @@ export default function Table({
                   {columnEntries.map(([key, col]) => {
                     const value = row?.[key];
                     const format = typeof col?.format === 'function' ? col.format : defaultFormat;
-                    return <TableCell key={key}>{format(value)}</TableCell>;
+                    return <TableCell key={key}>{format(value, row)}</TableCell>;
                   })}
 
                   {actionList.map((actionConfig, actionIndex) => {

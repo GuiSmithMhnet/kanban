@@ -5,12 +5,19 @@ import { useRouter } from 'next/router';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
+import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 
 import Loading from '@/components/Loading';
@@ -23,6 +30,7 @@ const defaultValues = {
   descricao: '',
   sigla: '',
   icon: '',
+  ativo: true,
 };
 
 const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) => {
@@ -31,12 +39,15 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
   const { refreshEspacos } = useNavbar();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingSubmitData, setPendingSubmitData] = useState(null);
 
   const { control, register, handleSubmit, reset, formState: { errors } } = useForm({ defaultValues: initialValues });
 
-  useEffect(() => { reset(initialValues ? initialValues : defaultValues) },[initialValues]);
+  useEffect(() => {
+    reset(initialValues ? { ...defaultValues, ...initialValues } : defaultValues);
+  }, [initialValues, reset]);
 
-  const onSubmit = async (data) => {
+  const salvarEspaco = async (data) => {
     try {
       setIsLoading(true);
 
@@ -66,7 +77,17 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
         return;
       }
 
-      const res = await authAxios(config.method, config.url, data);
+      const payload = modo === 'create' ? {
+        nome: data.nome,
+        descricao: data.descricao,
+        sigla: data.sigla,
+        icon: data.icon,
+      } : {
+        ...data,
+        ativo: Boolean(data.ativo),
+      };
+
+      const res = await authAxios(config.method, config.url, payload);
       const espaco = res?.data?.data;
       toast.success(config.successMessage);
 
@@ -85,6 +106,25 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
     }
   };
 
+  const onSubmit = async (data) => {
+    if (modo === 'edit' && data.ativo === false) {
+      setPendingSubmitData(data);
+      return;
+    }
+
+    await salvarEspaco(data);
+  };
+
+  const handleCancelarInativacao = () => {
+    setPendingSubmitData(null);
+  };
+
+  const handleConfirmarInativacao = async () => {
+    const data = pendingSubmitData;
+    setPendingSubmitData(null);
+    await salvarEspaco(data);
+  };
+
   return (
     <Box sx={{ width: '100%', mx: 'auto' }}>
       <Stack component="form" spacing={2.5} onSubmit={handleSubmit(onSubmit)}>
@@ -93,6 +133,25 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
             Salvar
           </Button>
         </Stack>
+
+        {modo === 'edit' ? (
+          <Controller
+            name="ativo"
+            control={control}
+            render={({ field }) => (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={field.value !== false}
+                    onChange={(event) => field.onChange(event.target.checked)}
+                    disabled={isLoading}
+                  />
+                }
+                label="Ativo"
+              />
+            )}
+          />
+        ) : null}
 
         <Controller
           name="icon"
@@ -171,6 +230,30 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
           })}
         />
       </Stack>
+
+      <Dialog open={Boolean(pendingSubmitData)} onClose={handleCancelarInativacao}>
+        <DialogTitle>Inativar espaço?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Ao salvar este espaço como inativo, ele deixará de aparecer na Navbar. Você poderá encontrá-lo na aba de
+            espaços inativos do Perfil.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button type="button" onClick={handleCancelarInativacao} disabled={isLoading}>
+            Cancelar
+          </Button>
+          <Button
+            type="button"
+            color="warning"
+            variant="contained"
+            onClick={handleConfirmarInativacao}
+            disabled={isLoading}
+          >
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {isLoading ? <Loading /> : <></>}
     </Box>
