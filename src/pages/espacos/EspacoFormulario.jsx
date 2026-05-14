@@ -16,6 +16,7 @@ import TextField from '@mui/material/TextField';
 import Loading from '@/components/Loading';
 import authAxios from '@/utils/authAxios';
 import { ESPACO_ICONES } from './EspacosIcones';
+import { useNavbar } from '@/contexts/NavbarContext';
 
 const defaultValues = {
   nome: '',
@@ -27,6 +28,7 @@ const defaultValues = {
 const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) => {
 
   const router = useRouter();
+  const { refreshEspacos } = useNavbar();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,12 +45,18 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
           method: 'post',
           url: '/api/espacos/criarEspaco',
           successMessage: 'Espaço criado',
-          onSuccess: (id) => router.replace(`/espacos?id=${id}`),
+          onSuccess: async (id) => {
+            await refreshEspacos();
+            router.replace(`/espacos?id=${id}`);
+          },
         },
         edit: {
           method: 'put',
           url: '/api/espacos/editarEspaco',
           successMessage: 'Espaço editado',
+          onSuccess: async () => {
+            await refreshEspacos();
+          },
         },
       };
 
@@ -62,10 +70,10 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
       const espaco = res?.data?.data;
       toast.success(config.successMessage);
 
-      const sucessFunction = config?.onSuccess;
-      if(sucessFunction && espaco){
+      const successFunction = config?.onSuccess;
+      if(successFunction && espaco){
         if(espaco?.id){
-          sucessFunction(espaco.id);
+          await successFunction(espaco.id);
         }
         // Outras checagens
       }

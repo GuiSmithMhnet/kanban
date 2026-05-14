@@ -17,7 +17,7 @@ import Typography from "@mui/material/Typography";
 import axios from "axios";
 
 import setToken from '@/utils/setToken';
-import getToken from '@/utils/getToken';
+import { useNavbar } from '@/contexts/NavbarContext';
 
 const defaultValues = {
   login: "",
@@ -25,6 +25,7 @@ const defaultValues = {
 };
 
 export default function LoginUsuarioPage() {
+  const { refreshNavbarData } = useNavbar();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -50,6 +51,7 @@ export default function LoginUsuarioPage() {
         return;
       }
 
+      await refreshNavbarData();
       toast.success(res.data?.mensagem || "Login realizado.");
 
       const params = new URLSearchParams(window.location.search);

@@ -20,6 +20,7 @@ import hasRouteAccess from "@/utils/hasRouteAccess";
 const Navbar = dynamic(() => import('@/components/Navbar'), { ssr: false });
 import Loading from '@/components/Loading';
 import { AppThemeProvider } from '@/contexts/ThemeContext';
+import { NavbarProvider } from '@/contexts/NavbarContext';
 
 export default function App({ Component, pageProps }) {
 
@@ -67,9 +68,11 @@ export default function App({ Component, pageProps }) {
 
   return (
     <AppThemeProvider>
-      <Box sx={{ display: "flex", minHeight: "100vh" }}>
-        {renderPage()}
-      </Box>
+      <NavbarProvider>
+        <Box sx={{ display: "flex", minHeight: "100vh" }}>
+          {renderPage()}
+        </Box>
+      </NavbarProvider>
     </AppThemeProvider>
   );
 }

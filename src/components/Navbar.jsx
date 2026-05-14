@@ -34,9 +34,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 // Utils
-import authAxios from '@/utils/authAxios';
 import hasRouteAcess from '@/utils/hasRouteAccess';
 import { useAppTheme } from "@/contexts/ThemeContext";
+import { useNavbar } from "@/contexts/NavbarContext";
 import { getEspacoIcon } from "@/pages/espacos/EspacosIcones";
 
 export const drawerWidth = 240;
@@ -63,15 +63,18 @@ const getInitialCollapsed = () => {
 const Navbar = () => {
   const router = useRouter();
   const { mode, toggleTheme } = useAppTheme();
+  const {
+    espacos,
+    profile,
+    isNavbarLoading,
+    isSpacesCollapsed,
+    setIsSpacesCollapsed,
+  } = useNavbar();
   const [collapsed, setCollapsed] = useState(getInitialCollapsed);
-  const [spacesOpen, setSpacesOpen] = useState(false);
-  const [espacos, setEspacos] = useState([]);
-  const [perfil, setPerfil] = useState(null);
-  const [isEspacosLoading, setIsEspacosLoading] = useState(false);
-  const [espacosError, setEspacosError] = useState(false);
   const currentWidth = collapsed ? collapsedDrawerWidth : drawerWidth;
   const isDarkMode = mode === 'dark';
   const themeButtonLabel = isDarkMode ? 'Ativar modo claro' : 'Ativar modo escuro';
+  const spacesOpen = !isSpacesCollapsed;
 
   const selectedSpaceId = router.query?.id ?Number(router.query.id) : null;
   const isOnEspacosPage = router.pathname === '/espacos';
@@ -80,71 +83,12 @@ const Navbar = () => {
     localStorage.setItem('kanban-toolbar-collapsed', JSON.stringify(collapsed));
   },[collapsed]);
 
-  useEffect(() => {
-    const fetchEspacos = async () => {
-      if (!hasRouteAcess('/espacos')) {
-        setEspacos([]);
-        return;
-      }
-
-      try {
-        setIsEspacosLoading(true);
-        setEspacosError(false);
-
-        const res = await authAxios('get', '/api/espacos/listarEspacos');
-        const responseData = res?.data?.data ?? res?.data ?? [];
-        const list = Array.isArray(responseData) ? responseData : responseData?.data;
-
-        setEspacos(Array.isArray(list) ? list : []);
-      } catch (error) {
-        console.log(error?.response || error);
-        setEspacos([]);
-        setEspacosError(true);
-      } finally {
-        setIsEspacosLoading(false);
-      }
-    };
-
-    fetchEspacos();
-  }, [router.asPath]);
-
-  useEffect(() => {
-    const fetchPerfil = async () => {
-      if (!hasRouteAcess('/usuarios/perfil')) {
-        setPerfil(null);
-        return;
-      }
-
-      try {
-        const res = await authAxios('get', '/api/usuarios/perfil');
-        setPerfil(res?.data?.data ?? null);
-      } catch (error) {
-        console.log(error?.response || error);
-        setPerfil(null);
-      }
-    };
-
-    fetchPerfil();
-  }, [router.asPath]);
-
-  useEffect(() => {
-    const handleProfileChange = (event) => {
-      setPerfil(event.detail ?? null);
-    };
-
-    window.addEventListener('kanban-profile-change', handleProfileChange);
-
-    return () => {
-      window.removeEventListener('kanban-profile-change', handleProfileChange);
-    };
-  }, []);
-
   const renderProfileIcon = () => {
-    if (perfil?.src) {
+    if (profile?.src) {
       return (
         <Avatar
-          src={perfil.src}
-          alt={perfil.nome || 'Perfil'}
+          src={profile.src}
+          alt={profile.nome || 'Perfil'}
           sx={{ width: 28, height: 28 }}
         />
       );
@@ -158,21 +102,13 @@ const Navbar = () => {
   const renderSpaceSubItems = () => {
     if (collapsed) return null;
 
-    if (isEspacosLoading) {
+    if (isNavbarLoading) {
       return (
         <ListItemButton sx={{ pl: 5, minHeight: 40 }} disabled>
           <ListItemIcon sx={{ minWidth: 32 }}>
             <CircularProgress size={18} />
           </ListItemIcon>
           <ListItemText primary="Carregando espaços..." />
-        </ListItemButton>
-      );
-    }
-
-    if (espacosError) {
-      return (
-        <ListItemButton sx={{ pl: 5, minHeight: 40 }} disabled>
-          <ListItemText primary="Erro ao carregar espaços" />
         </ListItemButton>
       );
     }
@@ -240,7 +176,7 @@ const Navbar = () => {
             <Tooltip title={spacesOpen ? 'Recolher espaços' : 'Expandir espaços'} placement="right">
               <IconButton
                 aria-label={spacesOpen ? 'Recolher espaços' : 'Expandir espaços'}
-                onClick={() => setSpacesOpen((prev) => !prev)}
+                onClick={() => setIsSpacesCollapsed((prev) => !prev)}
                 sx={{ mr: 1 }}
               >
                 {spacesOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
