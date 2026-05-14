@@ -14,26 +14,32 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LoginIcon from "@mui/icons-material/Login";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
+import PaletteIcon from "@mui/icons-material/Palette";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SyncIcon from "@mui/icons-material/Sync";
-import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import WorkspacesIcon from "@mui/icons-material/Workspaces";
 
 const acceptedExtensions = ["pdf", "jpg", "png", "jpeg"];
 
 const messages = [
+  "Espaço criado",
+  "Espaço editado",
   "Tarefa criada",
   "Tarefa editada",
   "Tarefa deletada",
   "Arquivo inserido",
-  "Arquivo deletado",
+  "Arquivo deletado com sucesso",
   "Preencha todos os dados para continuar",
+  "Espaço não encontrado!",
   "Tarefa não encontrada",
   "Delete os arquivos antes de deletar as tarefas",
   "Credenciais inválidas",
+  "Ainda não implementado",
 ];
 
 const SectionTitle = ({ icon, title }) => (
@@ -86,8 +92,9 @@ export default function DocumentacaoPage() {
               <Stack spacing={1.5}>
                 <SectionTitle icon={<MenuBookIcon color="primary" />} title="Introdução" />
                 <Typography variant="body1">
-                  O sistema permite criar uma conta, fazer login, gerenciar tarefas e anexar arquivos às tarefas.
-                  Depois de entrar, você acessa a tela de tarefas para consultar, criar, editar e excluir registros.
+                  O sistema permite criar uma conta, fazer login, organizar tarefas por espaços e anexar arquivos às
+                  tarefas já cadastradas. Depois de entrar, você acessa a área de espaços para criar um espaço e
+                  gerenciar as tarefas dele pela aba Quadro.
                 </Typography>
               </Stack>
             </CardContent>
@@ -125,18 +132,46 @@ export default function DocumentacaoPage() {
               <AccordionDetails>
                 <Typography variant="body1">
                   Você pode entrar usando seu username ou e-mail junto com a senha. Após o login, o sistema direciona
-                  você para a tela de tarefas.
+                  você para a documentação, a menos que exista um redirecionamento específico na tela acessada antes.
                 </Typography>
               </AccordionDetails>
             </Accordion>
 
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <SectionTitle icon={<TaskAltIcon color="primary" />} title="Tarefas" />
+                <SectionTitle icon={<WorkspacesIcon color="primary" />} title="Espaços" />
               </AccordionSummary>
               <AccordionDetails>
                 <Typography variant="body1" sx={{ mb: 1 }}>
-                  Na tela de tarefas, você pode:
+                  Espaços são áreas usadas para agrupar tarefas. Na tela de espaços, você pode criar e editar espaços
+                  informando:
+                </Typography>
+                <BulletList items={["ícone", "nome", "sigla", "descrição"]} />
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Regras visíveis no cadastro de espaços:
+                </Typography>
+                <BulletList
+                  items={[
+                    "Todos os campos são obrigatórios.",
+                    "O nome deve ter no máximo 50 caracteres.",
+                    "A sigla deve ter exatamente 2 caracteres.",
+                    "A descrição deve ter no máximo 255 caracteres.",
+                  ]}
+                />
+                <Alert severity="info" sx={{ mt: 2 }}>
+                  O menu lateral mostra a opção Espaços e, quando houver espaços cadastrados, exibe atalhos para eles.
+                </Alert>
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <SectionTitle icon={<DashboardIcon color="primary" />} title="Quadro do espaço" />
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Ao abrir um espaço salvo, a aba Quadro fica disponível. Nela, você pode:
                 </Typography>
                 <BulletList items={["listar tarefas", "criar tarefa", "editar tarefa", "excluir tarefa"]} />
                 <Divider sx={{ my: 2 }} />
@@ -145,7 +180,7 @@ export default function DocumentacaoPage() {
                 </Typography>
                 <BulletList items={["título", "descrição", "data de cadastro", "data de atualização"]} />
                 <Alert severity="info" sx={{ mt: 2 }}>
-                  Para criar uma tarefa, título e descrição são obrigatórios.
+                  Para criar uma tarefa, título e descrição são obrigatórios. A tarefa fica vinculada ao espaço aberto.
                 </Alert>
               </AccordionDetails>
             </Accordion>
@@ -157,7 +192,7 @@ export default function DocumentacaoPage() {
               <AccordionDetails>
                 <Typography variant="body1">
                   Uma tarefa só pode ser excluída se não possuir arquivos anexados. Se a tarefa tiver arquivos, exclua
-                  os arquivos primeiro e depois exclua a tarefa.
+                  os arquivos primeiro e depois exclua a tarefa. Antes da exclusão, o navegador pede confirmação.
                 </Typography>
               </AccordionDetails>
             </Accordion>
@@ -180,10 +215,6 @@ export default function DocumentacaoPage() {
                   ]}
                 />
 
-                <Alert severity="warning" sx={{ my: 2 }}>
-                  A opção de baixar arquivo aparece na interface, mas ainda não está implementada.
-                </Alert>
-
                 <Typography variant="body1" sx={{ mb: 1 }}>
                   Extensões aceitas:
                 </Typography>
@@ -205,8 +236,30 @@ export default function DocumentacaoPage() {
               </AccordionSummary>
               <AccordionDetails>
                 <Typography variant="body1">
-                  A tela de tarefas recebe atualizações em tempo real quando tarefas são criadas, editadas ou excluídas.
+                  A aba Quadro recebe atualizações em tempo real quando tarefas são criadas, editadas ou excluídas.
                 </Typography>
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <SectionTitle icon={<PaletteIcon color="primary" />} title="Navegação e tema" />
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  O menu lateral mostra as telas disponíveis para o seu estado de acesso:
+                </Typography>
+                <BulletList
+                  items={[
+                    "Visitantes podem acessar Início, Sobre, Documentação, Criar conta e Entrar.",
+                    "Usuários logados podem acessar Início, Sobre, Espaços, Documentação e Sair.",
+                    "O menu lateral pode ser recolhido e essa escolha fica salva no navegador.",
+                    "O botão de tema alterna entre modo claro e escuro e também salva a escolha no navegador.",
+                  ]}
+                />
+                <Alert severity="info" sx={{ mt: 2 }}>
+                  Se você tentar acessar uma tela sem permissão, o sistema redireciona para a página inicial.
+                </Alert>
               </AccordionDetails>
             </Accordion>
 
@@ -256,8 +309,8 @@ export default function DocumentacaoPage() {
                   items={[
                     "A página inicial ainda não possui conteúdo.",
                     "A página Sobre ainda é simples.",
+                    "A tela de espaços não possui botão de exclusão de espaço.",
                     "A ação de copiar tarefa ainda não está implementada.",
-                    "A ação de baixar arquivo ainda não está implementada.",
                   ]}
                 />
               </AccordionDetails>
