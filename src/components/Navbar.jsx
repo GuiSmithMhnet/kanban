@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 // Mui material
-import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
+import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Collapse from "@mui/material/Collapse";
@@ -31,6 +31,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import WorkspacesIcon from '@mui/icons-material/Workspaces';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 // Utils
 import authAxios from '@/utils/authAxios';
@@ -42,12 +43,13 @@ export const drawerWidth = 240;
 const collapsedDrawerWidth = 72;
 
 const menuItems = [
+  { label: "Perfil", href: "/perfil", icon: "profile" },
+  { label: "Entrar", href: '/usuarios/login', icon: <LoginIcon /> },
   { label: 'Início', href: '/', icon: <HouseIcon /> },
   { label: "Sobre", href: "/sobre", icon: <InfoOutlinedIcon /> },
   { label: "Espaços", href: "/espacos", icon: <WorkspacesIcon /> },
   { label: "Documentação", href: "/documentacao", icon: <MenuBookIcon /> },
   { label: "Criar conta", href: '/usuarios/novo', icon: <PersonAddIcon /> },
-  { label: "Entrar", href: '/usuarios/login', icon: <LoginIcon /> },
   { label: 'Sair', href: '/usuarios/logout', icon: <LogoutIcon /> },
 ];
 
@@ -64,6 +66,7 @@ const Navbar = () => {
   const [collapsed, setCollapsed] = useState(getInitialCollapsed);
   const [spacesOpen, setSpacesOpen] = useState(true);
   const [espacos, setEspacos] = useState([]);
+  const [perfil, setPerfil] = useState(null);
   const [isEspacosLoading, setIsEspacosLoading] = useState(false);
   const [espacosError, setEspacosError] = useState(false);
   const currentWidth = collapsed ? collapsedDrawerWidth : drawerWidth;
@@ -104,6 +107,41 @@ const Navbar = () => {
 
     fetchEspacos();
   }, [router.asPath]);
+
+  useEffect(() => {
+    const fetchPerfil = async () => {
+      if (!hasRouteAcess('/perfil')) {
+        setPerfil(null);
+        return;
+      }
+
+      try {
+        const res = await authAxios('get', '/api/usuarios/perfil');
+        setPerfil(res?.data?.data ?? null);
+      } catch (error) {
+        console.log(error?.response || error);
+        setPerfil(null);
+      }
+    };
+
+    fetchPerfil();
+  }, [router.asPath]);
+
+  const renderProfileIcon = () => {
+    if (perfil?.src) {
+      return (
+        <Avatar
+          src={perfil.src}
+          alt={perfil.nome || 'Perfil'}
+          sx={{ width: 28, height: 28 }}
+        />
+      );
+    }
+
+    return <AccountCircleIcon />;
+  };
+
+  const renderMenuIcon = (item) => item.icon === 'profile' ? renderProfileIcon() : item.icon;
 
   const renderSpaceSubItems = () => {
     if (collapsed) return null;
@@ -179,7 +217,7 @@ const Navbar = () => {
                 justifyContent: "center",
               }}
             >
-              {item.icon}
+              {renderMenuIcon(item)}
             </ListItemIcon>
             <Box sx={{ opacity: collapsed ? 0 : 1, width: collapsed ? 0 : "auto", transition: "opacity 0.2s ease" }}>
               <ListItemText primary={item.label} />
@@ -257,7 +295,7 @@ const Navbar = () => {
                   justifyContent: "center",
                 }}
               >
-                {item.icon}
+                {renderMenuIcon(item)}
               </ListItemIcon>
               <Box sx={{ opacity: collapsed ? 0 : 1, width: collapsed ? 0 : "auto", transition: "opacity 0.2s ease" }}>
                 <ListItemText primary={item.label} />

@@ -3,9 +3,8 @@ import defaultResponse from '@/pages/api/config/defaultResponse.js';
 import getTableColumns from '@/pages/api/utils/getTableColumns.js';
 import encryptPassword from '@/pages/api/utils/encryptPassword.js';
 import buildInsert from '@/pages/api/utils/buildInsert.js';
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const USERNAME_REGEX = /^[A-Za-z0-9_]+$/;
+import isEmailValid from '@/pages/api/utils/isEmailValid.js';
+import isUsernameValid from '@/pages/api/utils/isUsernameValid.js';
 
 const handler = async (req, res) => {
     if (req.method !== 'POST') {
@@ -43,11 +42,11 @@ const handler = async (req, res) => {
             }
         }
 
-        if (!EMAIL_REGEX.test(data.email)) {
+        if (!isEmailValid(data.email)) {
             return res.status(400).json(defaultResponse('Informe um e-mail válido.'));
         }
 
-        if(!USERNAME_REGEX.test(data.username)){
+        if(!isUsernameValid(data.username)){
             return res.status(400).json(defaultResponse('Usuário deve ter apenas letras e números'));
         }
 
