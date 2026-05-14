@@ -43,7 +43,7 @@ export const drawerWidth = 240;
 const collapsedDrawerWidth = 72;
 
 const menuItems = [
-  { label: "Perfil", href: "/perfil", icon: "profile" },
+  { label: "Perfil", href: "/usuarios/perfil", icon: "profile" },
   { label: "Entrar", href: '/usuarios/login', icon: <LoginIcon /> },
   { label: 'Início', href: '/', icon: <HouseIcon /> },
   { label: "Sobre", href: "/sobre", icon: <InfoOutlinedIcon /> },
@@ -110,7 +110,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchPerfil = async () => {
-      if (!hasRouteAcess('/perfil')) {
+      if (!hasRouteAcess('/usuarios/perfil')) {
         setPerfil(null);
         return;
       }
@@ -126,6 +126,18 @@ const Navbar = () => {
 
     fetchPerfil();
   }, [router.asPath]);
+
+  useEffect(() => {
+    const handleProfileChange = (event) => {
+      setPerfil(event.detail ?? null);
+    };
+
+    window.addEventListener('kanban-profile-change', handleProfileChange);
+
+    return () => {
+      window.removeEventListener('kanban-profile-change', handleProfileChange);
+    };
+  }, []);
 
   const renderProfileIcon = () => {
     if (perfil?.src) {
