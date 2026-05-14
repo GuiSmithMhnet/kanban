@@ -103,7 +103,7 @@ const Navbar = () => {
     };
 
     fetchEspacos();
-  }, [router.pathname]);
+  }, [router.asPath]);
 
   const renderSpaceSubItems = () => {
     if (collapsed) return null;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -24,6 +25,9 @@ const defaultValues = {
 };
 
 const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) => {
+
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const { control, register, handleSubmit, reset, formState: { errors } } = useForm({ defaultValues: initialValues });
@@ -39,6 +43,7 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
           method: 'post',
           url: '/api/espacos/criarEspaco',
           successMessage: 'Espaço criado',
+          onSuccess: (id) => router.replace(`/espacos?id=${id}`),
         },
         edit: {
           method: 'put',
@@ -53,8 +58,17 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
         return;
       }
 
-      await authAxios(config.method, config.url, data);
+      const res = await authAxios(config.method, config.url, data);
+      const espaco = res?.data?.data;
       toast.success(config.successMessage);
+
+      const sucessFunction = config?.onSuccess;
+      if(sucessFunction && espaco){
+        if(espaco?.id){
+          sucessFunction(espaco.id);
+        }
+        // Outras checagens
+      }
     } catch (error) {
       console.log(error?.response || error);
       toast.error(error?.response?.data?.mensagem || 'Erro ao salvar espaço');
