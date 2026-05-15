@@ -100,13 +100,15 @@ const Convites = ({ convites = [], onConviteCancelado }) => {
         key: 'id',
         action: (id, row) => (
           <ToolTip title='Cancelar convite'>
-            <IconButton
-              color='error'
-              disabled={row?.status !== 'PENDENTE' || isLoading}
-              onClick={() => handleOpenCancelDialog(row)}
-            >
-              <CancelOutlinedIcon />
-            </IconButton>
+            <span>
+              <IconButton
+                color='error'
+                disabled={row?.status !== 'PENDENTE' || isLoading}
+                onClick={() => handleOpenCancelDialog(row)}
+              >
+                <CancelOutlinedIcon />
+              </IconButton>
+            </span>
           </ToolTip>
         )
       },
@@ -114,12 +116,14 @@ const Convites = ({ convites = [], onConviteCancelado }) => {
         key: 'id',
         action: (id, row) => (
           <ToolTip title='Reenviar e-mail'>
-            <IconButton
-              color='primary'
-              disabled={row?.status !== 'PENDENTE' || isLoading}
-              onClick={() => handleSendAgain(id)}>
-              <ReplayOutlinedIcon />
-            </IconButton>
+            <span>
+              <IconButton
+                color='primary'
+                disabled={row?.status !== 'PENDENTE' || isLoading}
+                onClick={() => handleSendAgain(id)}>
+                <ReplayOutlinedIcon />
+              </IconButton>
+            </span>
           </ToolTip>
         )
       }
