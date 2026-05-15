@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 import authAxios from '@/utils/authAxios';
 import hasRouteAccess from '@/utils/hasRouteAccess';
+import catchAuthAxios from '@/utils/catchAxios';
 
 const NavbarContext = createContext({
   espacos: [],
@@ -46,7 +47,8 @@ export const NavbarProvider = ({ children }) => {
         setEspacos(nextEspacos);
         return nextEspacos;
       } catch (error) {
-        console.log(error?.response || error);
+        catchAuthAxios(error, 'Erro ao listar espaços');
+        // console.log(error?.response || error);
         setEspacos([]);
         return [];
       }
@@ -67,7 +69,8 @@ export const NavbarProvider = ({ children }) => {
         setProfile(nextProfile);
         return nextProfile;
       } catch (error) {
-        console.log(error?.response || error);
+        catchAuthAxios(error, 'Erro ao buscar perfil');
+        // console.log(error?.response || error);
         setProfile(null);
         return null;
       }
@@ -100,6 +103,7 @@ export const NavbarProvider = ({ children }) => {
   const value = useMemo(() => ({
     espacos,
     profile,
+    setProfile,
     isNavbarLoading,
     isSpacesCollapsed,
     setIsSpacesCollapsed,
@@ -109,6 +113,7 @@ export const NavbarProvider = ({ children }) => {
   }), [
     espacos,
     profile,
+    setProfile,
     isNavbarLoading,
     isSpacesCollapsed,
     refreshEspacos,

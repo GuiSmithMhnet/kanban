@@ -16,7 +16,7 @@ import Typography from "@mui/material/Typography";
 
 import axios from "axios";
 
-import setToken from '@/utils/setToken';
+import { setToken } from '@/utils/token';
 import { useNavbar } from '@/contexts/NavbarContext';
 
 const defaultValues = {

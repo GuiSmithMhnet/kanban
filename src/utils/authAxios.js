@@ -1,5 +1,5 @@
 import axios from 'axios';
-import getToken from './getToken';
+import { getToken } from '@/utils/token';
 
 const authAxios = async (method, url, body = {}, customHeaders = {}, contentType = 'application/json') => {
     try {

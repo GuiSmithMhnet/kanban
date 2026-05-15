@@ -15,6 +15,8 @@ import authAxios from '@/utils/authAxios';
 import PerfilFormulario from './PerfilFormulario';
 import EspacosInativosLista from './EspacosInativosLista';
 
+import { useNavbar } from '@/contexts/NavbarContext';
+
 const TabPanel = ({ children, index, value }) => (
   <Box
     role="tabpanel"
@@ -33,27 +35,10 @@ const getTabProps = (index) => ({
 });
 
 export default function PerfilPage() {
+
+  const { profile, setProfile, isNavbarLoading } = useNavbar();
+
   const [activeTab, setActiveTab] = useState(0);
-  const [perfil, setPerfil] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchPerfil = async () => {
-      try {
-        setIsLoading(true);
-
-        const res = await authAxios('get', '/api/usuarios/perfil');
-        setPerfil(res?.data?.data ?? null);
-      } catch (error) {
-        console.log(error?.response || error);
-        toast.error(error?.response?.data?.mensagem || 'Erro ao buscar perfil');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchPerfil();
-  }, []);
 
   const handleTabChange = (_, value) => {
     setActiveTab(value);
@@ -66,7 +51,7 @@ export default function PerfilPage() {
         <meta name="description" content="Perfil do usuário" />
       </Head>
 
-      {isLoading ? <Loading /> : <></>}
+      {isNavbarLoading ? <Loading /> : <></>}
 
       <Stack spacing={3}>
         <Box>
@@ -86,7 +71,7 @@ export default function PerfilPage() {
         </Box>
 
         <TabPanel value={activeTab} index={0}>
-          <PerfilFormulario mode="edit" initialValues={perfil} onPerfilAtualizado={setPerfil} />
+          <PerfilFormulario mode="edit" initialValues={profile} onPerfilAtualizado={setProfile} />
         </TabPanel>
 
         <TabPanel value={activeTab} index={1}>

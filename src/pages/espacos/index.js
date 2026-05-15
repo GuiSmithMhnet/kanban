@@ -25,6 +25,9 @@ import ConvitesPage from '@/pages/espacos/convites';
 import TarefasPage from '@/pages/espacos/tarefas';
 import UsuariosPage from '@/pages/espacos/usuarios';
 
+// Contextos
+import { useNavbar } from '@/contexts/NavbarContext';
+
 // Uitls
 import authAxios from '@/utils/authAxios';
 
@@ -50,33 +53,24 @@ export default function EspacosPage() {
   const router = useRouter();
 
   const { id } = router.query;
+  
+  const { espacos, isNavbarLoading } = useNavbar();
 
   const [activeTab, setActiveTab] = useState(0);
   const [space, setSpace] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchSpaces = async () => {
-      try {
-        if (!id) {
-          setSpace(null);
-          setActiveTab(0);
-          return;
-        }
-        setIsLoading(true);
-        const params = new URLSearchParams({ id });
-        const res = await authAxios('get', `/api/espacos/selecionarEspaco?${params.toString()}`);
-        setSpace(res.data.data);
-        setActiveTab(1);
-      } catch (error) {
-        console.log(error?.response || error);
-        toast.error(error?.response?.data?.mensagem || 'Erro ao buscar espaço');
-      } finally {
-        setIsLoading(false);
-      }
+    if(!id){
+      setSpace(null);
+      setActiveTab(0);
+      return;
     }
-    fetchSpaces();
+    setSpace(espacos.find(espaco => espaco.id == id));
   },[id]);
+  
+  useEffect(() => {
+    console.log('Espaço: ', space);
+  },[space]);
 
   const handleTabChange = (_, value) => {
     setActiveTab(value);
@@ -89,7 +83,7 @@ export default function EspacosPage() {
         <meta name="description" content="Cadastro de espaços" />
       </Head>
 
-      {isLoading ? <Loading /> : <></>}
+      {isNavbarLoading ? <Loading /> : <></>}
 
       <Stack spacing={3}>
         <Box>

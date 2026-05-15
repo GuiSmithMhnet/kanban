@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import db from '../connectDB';
 import defaultResponse from '../defaultResponse';
 
-const MESSAGE = 'Não autorizado';
+const MESSAGE = 'Não autorizado. Faça login para continuar';
 
 const authMiddleware = handler => async (req, res) => {
     try {
@@ -36,6 +36,14 @@ const authMiddleware = handler => async (req, res) => {
         return handler(req, res);
 
     } catch (error) {
+        if(error.name === 'TokenExpiredError'){
+            return res.status(401).json(defaultResponse('Sessão expirada. Faça login novamente.'));
+        }
+
+        if(error.name === 'JsonWebTokenError'){
+            return res.status(401).json(defaultResponse(MESSAGE));
+        }
+        
         console.log('Erro ao autenticar rota', error);
         return res.status(500).json(defaultResponse('Erro ao autenticar rota. Contate o suporte!'));
     }

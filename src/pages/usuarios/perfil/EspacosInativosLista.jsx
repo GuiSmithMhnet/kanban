@@ -12,31 +12,18 @@ import Loading from '@/components/Loading';
 import authAxios from '@/utils/authAxios';
 import { getEspacoIcon } from '@/pages/espacos/EspacosIcones';
 
+// Contextos
+import { useNavbar } from '@/contexts/NavbarContext';
+
 const EspacosInativosLista = () => {
-  const [espacos, setEspacos] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { espacos, isNavbarLoading } = useNavbar();
+
+  const [espacosInativos, setEspacosInativos] = useState([]);
 
   useEffect(() => {
-    const fetchEspacos = async () => {
-      try {
-        setIsLoading(true);
-
-        const res = await authAxios('get', '/api/espacos/listarEspacos');
-        const responseData = res?.data?.data ?? res?.data ?? [];
-        const list = Array.isArray(responseData) ? responseData : responseData?.data;
-        const espacosInativos = Array.isArray(list) ? list.filter((espaco) => espaco?.ativo === false) : [];
-
-        setEspacos(espacosInativos);
-      } catch (error) {
-        console.log(error?.response || error);
-        toast.error(error?.response?.data?.mensagem || 'Erro ao listar espaços inativos');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchEspacos();
-  }, []);
+    setEspacosInativos(espacos.filter(espaco => espaco.ativo === false));
+  }, [espacos]);
 
   const tableColumns = {
     nome: {
@@ -76,13 +63,13 @@ const EspacosInativosLista = () => {
 
   return (
     <Stack spacing={2.5}>
-      {isLoading ? <Loading /> : <></>}
+      {isNavbarLoading ? <Loading /> : <></>}
 
       <Typography variant="body1" color="text.secondary">
         Espaços inativos não aparecem na Navbar.
       </Typography>
 
-      <Table tableColumns={tableColumns} tableRowActions={tableRowActions} rows={espacos} />
+      <Table tableColumns={tableColumns} tableRowActions={tableRowActions} rows={espacosInativos} />
     </Stack>
   );
 };
