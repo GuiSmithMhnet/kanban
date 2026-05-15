@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { DataGrid } from '@mui/x-data-grid';
 
 import Loading from '@/components/Loading';
-import Table from '@/components/Table';
 import authAxios from '@/utils/authAxios';
 import catchAuthAxios from '@/utils/catchAxios';
 import getNameInitials from '@/utils/getNameInitials';
@@ -35,39 +36,79 @@ const UsuariosPage = ({ espaco }) => {
     }
   }, [espaco]);
 
-  const tableColumns = {
-    nome: {
-      display: 'Nome',
-      format: (value, row) => (
+  const columns = [
+    {
+      field: 'nome',
+      headerName: 'Nome',
+      flex: 1.2,
+      minWidth: 220,
+      renderCell: (params) => (
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Avatar src={row?.src || undefined} alt={value || 'Usuário'} sx={{ width: 32, height: 32 }}>
-            {value ? getNameInitials(value) : '?'}
+          <Avatar
+            src={params.row?.src || undefined}
+            alt={params.value || 'Usuário'}
+            sx={{ width: 32, height: 32 }}
+          >
+            {params.value ? getNameInitials(params.value) : '?'}
           </Avatar>
-          <span>{value}</span>
+          <Typography variant="body2">{params.value}</Typography>
         </Stack>
       ),
     },
-    username: {
-      display: 'Usuário',
-      format: (value) => value ? `@${value}` : '',
+    {
+      field: 'username',
+      headerName: 'Usuário',
+      flex: 0.9,
+      minWidth: 160,
+      valueGetter: (_, row) => (row?.username ? `@${row.username}` : ''),
     },
-    email: {
-      display: 'E-mail',
+    {
+      field: 'email',
+      headerName: 'E-mail',
+      flex: 1.2,
+      minWidth: 220,
     },
-    vinculo: {
-      display: 'Vínculo',
+    {
+      field: 'vinculo',
+      headerName: 'Vínculo',
+      flex: 0.8,
+      minWidth: 140,
     },
-  };
+  ];
+
+  const rows = usuarios.map((usuario, index) => ({
+    id: usuario?.id ?? usuario?.id_usuario ?? usuario?.email ?? usuario?.username ?? index,
+    ...usuario,
+  }));
 
   return (
     <Stack spacing={2.5}>
-      {isLoading ? <Loading /> : <></>}
+      {isLoading ? <Loading /> : null}
 
       <Typography variant="body1" color="text.secondary">
         Usuários vinculados ao espaço.
       </Typography>
 
-      <Table tableColumns={tableColumns} rows={usuarios} />
+      <Box sx={{ width: '100%' }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          autoHeight
+          disableRowSelectionOnClick
+          hideFooter
+          pageSizeOptions={[rows.length || 5]}
+          onRowClick={() => {}}
+          localeText={{
+            noRowsLabel: 'Nenhum registro.',
+          }}
+          sx={{
+            border: 0,
+            '& .MuiDataGrid-row': {
+              cursor: 'pointer',
+            },
+          }}
+        />
+      </Box>
     </Stack>
   );
 };
