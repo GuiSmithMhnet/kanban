@@ -4,10 +4,7 @@ import authMiddleware from '@/pages/api/config/middlewares/authMiddleware';
 import RabbitmqServer from '@/pages/api/config/rabbitmq';
 import buildInsert from '@/pages/api/utils/buildInsert';
 import getCurrentUrl from '@/pages/api/config/getCurrentUrl';
-
-const max_emails_in_24h = 5;
-const max_pending_invites = 5;
-const expiration_days = 3;
+import rules from './inviteRules';
 
 const publishEmail = async (value) => {
     try {
@@ -67,21 +64,10 @@ const handler = async (req, res) => {
 
         await client.query('BEGIN');
 
-        const [spaceResult, requestUserBondResult, userResult] = await Promise.all([
+        const [spaceResult, userResult] = await Promise.all([
             client.query({
                 text: `SELECT id, nome, id_usuario FROM espaco WHERE id = $1`,
                 values: [idEspaco]
-            }),
-            client.query({
-                text: `
-                    SELECT id
-                    FROM espaco_usuario
-                    WHERE id_espaco = $1
-                    AND id_usuario = $2
-                    AND ativo = true
-                    LIMIT 1
-                `,
-                values: [idEspaco, req.user.id]
             }),
             client.query({
                 text: `SELECT id, email, nome FROM usuario WHERE id = $1`,
@@ -96,9 +82,8 @@ const handler = async (req, res) => {
 
         const space = spaceResult.rows[0];
         const isOwner = Number(space.id_usuario) === Number(req.user.id);
-        const hasSpaceBond = requestUserBondResult.rowCount === 1;
 
-        if(!isOwner && !hasSpaceBond){
+        if(!isOwner){
             await client.query('ROLLBACK');
             return res.status(404).json(defaultResponse('Espaço não encontrado!'));
         }
@@ -144,15 +129,15 @@ const handler = async (req, res) => {
                 values: [idUsuario]
             });
 
-            if(sentEmailsResult.rows[0].total >= max_emails_in_24h){
+            if(sentEmailsResult.rows[0].total >= rules.max_emails_in_24h){
                 await client.query('ROLLBACK');
-                return res.status(429).json(defaultResponse('Limite de 5 e-mails em 24h atingido'));
+                return res.status(429).json(defaultResponse(`Limite de ${rules.max_emails_in_24h} e-mails em 24h atingido`));
             }
         }
 
         const pendingInvitesResult = await client.query({
             text: `
-                SELECT COUNT(*)::int AS total
+                SELECT 1
                 FROM espaco_convite
                 WHERE id_usuario = $1
                 AND id_espaco = $2
@@ -161,16 +146,16 @@ const handler = async (req, res) => {
             values: [idUsuario, idEspaco]
         });
 
-        if(pendingInvitesResult.rows[0].total >= max_pending_invites){
+        if(pendingInvitesResult.rowCount > 0){
             await client.query('ROLLBACK');
-            return res.status(409).json(defaultResponse('usuário já possui 5 convites pendentes'));
+            return res.status(409).json(defaultResponse('Usuário já foi convidado!'));
         }
 
         const inviteData = {
             id_espaco: idEspaco,
             id_usuario: idUsuario,
             enviar_email: data.enviar_email,
-            data_expiracao: new Date(Date.now() + expiration_days * 24 * 60 * 60 * 1000),
+            data_expiracao: new Date(Date.now() + rules.expiration_days * 24 * 60 * 60 * 1000),
         };
 
         const inviteSql = buildInsert('espaco_convite', inviteData);

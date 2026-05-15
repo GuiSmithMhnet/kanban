@@ -2,6 +2,9 @@ import db from '@/pages/api/config/connectDB';
 import defaultResponse from '@/pages/api/config/defaultResponse';
 import authMiddleware from '@/pages/api/config/middlewares/authMiddleware';
 import buildImgSrc from '@/pages/api/utils/buildImgSrc';
+import userBelongsToSpace from '@/pages/api/utils/userBelongsToSpace';
+
+const LIMIT_USERS_SEARCH = 25;
 
 const handler = async (req, res) => {
   if (req.method !== 'GET') {
@@ -20,38 +23,21 @@ const handler = async (req, res) => {
       return res.status(400).json(defaultResponse('ID inválido'));
     }
 
-    const [espacoResult, vinculoResult] = await Promise.all([
-      db.query({
-        text: `
-          SELECT id, id_usuario
-          FROM espaco
-          WHERE id = $1
-        `,
-        values: [idEspaco],
-      }),
-      db.query({
-        text: `
-          SELECT id
-          FROM espaco_usuario
-          WHERE id_espaco = $1
-            AND id_usuario = $2
-            AND ativo = true
-          LIMIT 1
-        `,
-        values: [idEspaco, req.user.id],
-      }),
-    ]);
+    const belongsToSpace = await userBelongsToSpace(idEspaco, req.user.id);
 
-    if (espacoResult.rowCount !== 1) {
+    // Erro
+    if(belongsToSpace.error === true){
+      return res.status(500).json(defaultResponse('Erro ao verificar pertencimento ao espaço. Contate o suporte'));
+    }
+
+    // Espaço não existe OU usuário não pertence ao espaço
+    if(belongsToSpace.belongs === false){
       return res.status(404).json(defaultResponse('Espaço não encontrado!'));
     }
 
-    const espaco = espacoResult.rows[0];
+    const espaco = belongsToSpace.espaco;
+
     const isProprietario = Number(espaco.id_usuario) === Number(req.user.id);
-
-    if (!isProprietario && vinculoResult.rowCount !== 1) {
-      return res.status(404).json(defaultResponse('Espaço não encontrado!'));
-    }
 
     const usuariosPromise = db.query({
       text: `
@@ -61,9 +47,9 @@ const handler = async (req, res) => {
           AND u.id <> $2
           AND CONCAT_WS(' ', u.nome, u.username, u.email) ILIKE $1
         ORDER BY u.nome ASC
-        LIMIT 25
+        LIMIT $3
       `,
-      values: [`%${termo}%`, req.user.id],
+      values: [`%${termo}%`, req.user.id, LIMIT_USERS_SEARCH],
     });
 
     const participantesPromise = db.query({

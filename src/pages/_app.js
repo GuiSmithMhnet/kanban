@@ -55,7 +55,7 @@ export default function App({ Component, pageProps }) {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         {shouldUseMainCard ? (
-          <Card sx={{ width: '100%', maxWidth: 1200, mx: 'auto' }}>
+          <Card sx={{ width: '100%', maxWidth: '100%', mx: 'auto' }}>
             <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
               {pageContent}
             </CardContent>

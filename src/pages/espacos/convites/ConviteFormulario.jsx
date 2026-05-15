@@ -15,6 +15,8 @@ import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 
 import authAxios from '@/utils/authAxios';
 
+import getNameInitials from '@/utils/getNameInitials';
+
 const defaultValues = {
   id_espaco: null,
   usuario: null,
@@ -56,7 +58,7 @@ const ConviteFormulario = ({ mode = 'create', initialValues = defaultValues, onC
           termo,
           id_espaco: initialValues.id_espaco,
         });
-        const res = await authAxios('get', `/api/usuarios/listarUsuarios?${params.toString()}`);
+        const res = await authAxios('get', `/api/usuarios/buscarUsuarios?${params.toString()}`);
         setUsuarios(res?.data?.data ?? []);
       } catch (error) {
         console.log(error?.response || error);
@@ -119,7 +121,7 @@ const ConviteFormulario = ({ mode = 'create', initialValues = defaultValues, onC
             {...field}
             loading={isSearching}
             options={usuarios}
-            sx={{ width: { xs: '100%', md: 360 } }}
+            sx={{ flex: '1 1 460px', minWidth: { xs: '100%', md: 420 } }}
             getOptionLabel={getOptionLabel}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             noOptionsText="Nenhum usuário encontrado"
@@ -133,7 +135,7 @@ const ConviteFormulario = ({ mode = 'create', initialValues = defaultValues, onC
               <li {...props} key={option.id}>
                 <Stack direction="row" spacing={1.5} alignItems="center">
                   <Avatar src={option.src || undefined} alt={option.nome} sx={{ width: 28, height: 28 }}>
-                    {option.nome ? option.nome.charAt(0).toUpperCase() : '?'}
+                    {option.nome ? getNameInitials(option.nome) : '?'}
                   </Avatar>
                   <span>{getOptionLabel(option)}</span>
                 </Stack>
@@ -156,7 +158,7 @@ const ConviteFormulario = ({ mode = 'create', initialValues = defaultValues, onC
         name="enviar_email"
         control={control}
         render={({ field }) => (
-          <FormControl sx={{ minWidth: 145 }} disabled={isLoading}>
+          <FormControl sx={{ flex: { xs: '1 1 auto', md: '0 0 170px' }, minWidth: 170 }} disabled={isLoading}>
             <InputLabel id="convite-enviar-email-label">Enviar e-mail</InputLabel>
             <Select
               labelId="convite-enviar-email-label"
@@ -176,7 +178,7 @@ const ConviteFormulario = ({ mode = 'create', initialValues = defaultValues, onC
         variant="contained"
         startIcon={<PersonAddAltIcon />}
         disabled={isLoading}
-        sx={{ minWidth: 130, height: 40 }}
+        sx={{ flex: { xs: '1 1 auto', md: '0 0 auto' }, minWidth: 130, height: 56 }}
       >
         Convidar
       </Button>

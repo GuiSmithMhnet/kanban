@@ -66,11 +66,8 @@ export default function EspacosPage() {
       return;
     }
     setSpace(espacos.find(espaco => espaco.id == id));
-  },[id]);
-  
-  useEffect(() => {
-    console.log('Espaço: ', space);
-  },[space]);
+  },[id, espacos]);
+
 
   const handleTabChange = (_, value) => {
     setActiveTab(value);

@@ -2,6 +2,7 @@ import db from '@/pages/api/config/connectDB';
 import defaultResponse from '@/pages/api/config/defaultResponse';
 import authMiddleware from '@/pages/api/config/middlewares/authMiddleware';
 import buildImgSrc from '@/pages/api/utils/buildImgSrc';
+import userBelongsToSpace from '@/pages/api/utils/userBelongsToSpace';
 
 const formatUsuario = (usuario, vinculo) => ({
   id: usuario.id,
@@ -25,48 +26,26 @@ const handler = async (req, res) => {
       return res.status(400).json(defaultResponse('ID inválido'));
     }
 
-    const [espacoResult, vinculoResult] = await Promise.all([
-      db.query({
-        text: `
-          SELECT id, id_usuario
-          FROM espaco
-          WHERE id = $1
-        `,
-        values: [idEspaco],
-      }),
-      db.query({
-        text: `
-          SELECT id
-          FROM espaco_usuario
-          WHERE id_espaco = $1
-            AND id_usuario = $2
-            AND ativo = true
-          LIMIT 1
-        `,
-        values: [idEspaco, req.user.id],
-      }),
-    ]);
+    const belongsToSpace = await userBelongsToSpace(id_espaco, req.user.id);
 
-    if (espacoResult.rowCount !== 1) {
+    // Erro
+    if(belongsToSpace.error === true){
+      return res.status(500).json(defaultResponse('Erro ao verificar pertencimento ao espaço. Contate o suporte'));
+    }
+
+    // Espaço não existe OU usuário não pertence ao espaço
+    if(belongsToSpace.belongs === false){
       return res.status(404).json(defaultResponse('Espaço não encontrado!'));
     }
 
-    const espaco = espacoResult.rows[0];
+    const columns = ['id','nome','email','username','avatar_public_url'];
+
+    const espaco = belongsToSpace.espaco;
     const isProprietario = Number(espaco.id_usuario) === Number(req.user.id);
-    const hasVinculo = vinculoResult.rowCount === 1;
 
-    if (!isProprietario && !hasVinculo) {
-      return res.status(404).json(defaultResponse('Espaço não encontrado!'));
-    }
-
-    const participantesPromise = db.query({
+    const participantesResult = await db.query({
       text: `
-        SELECT
-          u.id,
-          u.nome,
-          u.email,
-          u.username,
-          u.avatar_public_url
+        SELECT ${(columns.map(col => `u.${col}`)).join(', ')}
         FROM espaco_usuario eu
         JOIN usuario u ON u.id = eu.id_usuario
         WHERE eu.id_espaco = $1 AND eu.ativo = true
@@ -75,29 +54,16 @@ const handler = async (req, res) => {
       values: [idEspaco],
     });
 
-    const proprietarioPromise = isProprietario
-      ? Promise.resolve(null)
-      : db.query({
-        text: `
-          SELECT id, nome, email, username, avatar_public_url
-          FROM usuario
-          WHERE id = $1
-        `,
-        values: [espaco.id_usuario],
-      });
-
-    const [participantesResult, proprietarioResult] = await Promise.all([
-      participantesPromise,
-      proprietarioPromise,
-    ]);
-
     const usuariosMap = new Map();
 
     if (isProprietario) {
       usuariosMap.set(req.user.id, formatUsuario(req.user, 'Proprietário'));
-    } else if (proprietarioResult?.rowCount === 1) {
-      const proprietario = proprietarioResult.rows[0];
-      usuariosMap.set(proprietario.id, formatUsuario(proprietario, 'Proprietário'));
+    } else {
+      const proprietarioResult = await db.query({ text: `SELECT ${columns.join(', ')} FROM usuario WHERE id = $1`, values:[espaco.id_usuario] });
+      if(proprietarioResult.rowCount == 1){
+        const proprietario = proprietarioResult.rows[0];
+        usuariosMap.set(proprietario.id, formatUsuario(proprietario, 'Proprietário'));
+      }
     }
 
     participantesResult.rows.forEach((usuario) => {
@@ -116,3 +82,4 @@ const handler = async (req, res) => {
 };
 
 export default authMiddleware(handler);
+// export default handler;

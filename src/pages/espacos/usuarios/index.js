@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import Loading from '@/components/Loading';
 import Table from '@/components/Table';
 import authAxios from '@/utils/authAxios';
+import getNameInitials from '@/utils/getNameInitials';
 
 const UsuariosPage = ({ espaco }) => {
   const [usuarios, setUsuarios] = useState([]);
@@ -40,7 +41,7 @@ const UsuariosPage = ({ espaco }) => {
       format: (value, row) => (
         <Stack direction="row" spacing={1.5} alignItems="center">
           <Avatar src={row?.src || undefined} alt={value || 'Usuário'} sx={{ width: 32, height: 32 }}>
-            {value ? value.charAt(0).toUpperCase() : '?'}
+            {value ? getNameInitials(value) : '?'}
           </Avatar>
           <span>{value}</span>
         </Stack>
