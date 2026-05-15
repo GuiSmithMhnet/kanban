@@ -13,6 +13,7 @@ import Loading from '@/components/Loading';
 import truncateString from '@/utils/truncateString';
 import { formatDateTime } from '@/utils/formatDate';
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 
 // React
 import { toast } from 'react-toastify';
@@ -52,8 +53,7 @@ const TarefaArquivosLista = ({ arquivos, setArquivos }) => {
             setArquivos(prev => prev.filter(a => a.id !== id));
             toast.success(res?.data?.mensagem || 'Arquivo deletado');
         } catch (error) {
-            console.error(error);
-            toast.error(error?.data?.data?.mensagem || 'Erro ao deletar arquivo');
+            catchAuthAxios(error, 'Erro ao deletar arquivo');
         } finally {
             setIsLoading(false);
         }

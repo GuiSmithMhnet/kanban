@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import Loading from '@/components/Loading';
 import Table from '@/components/Table';
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 import getNameInitials from '@/utils/getNameInitials';
 
 const UsuariosPage = ({ espaco }) => {
@@ -23,8 +24,7 @@ const UsuariosPage = ({ espaco }) => {
         const res = await authAxios('get', `/api/espacos/usuarios/listarUsuarios?${params.toString()}`);
         setUsuarios(res?.data?.data ?? []);
       } catch (error) {
-        console.log(error?.response || error);
-        toast.error(error?.response?.data?.mensagem || 'Erro ao listar usuários');
+        catchAuthAxios(error, 'Erro ao listar usuários');
       } finally {
         setIsLoading(false);
       }

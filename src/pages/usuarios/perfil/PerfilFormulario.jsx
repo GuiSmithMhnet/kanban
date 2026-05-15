@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 
 import Loading from '@/components/Loading';
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 import PerfilImagemFormulario from './PerfilImagemFormulario';
 
 const defaultValues = {
@@ -54,8 +55,7 @@ const PerfilFormulario = ({ mode = 'edit', initialValues = defaultValues, onPerf
         window.dispatchEvent(new CustomEvent('kanban-profile-change', { detail: perfil }));
       }
     } catch (error) {
-      console.log(error?.response || error);
-      toast.error(error?.response?.data?.mensagem || 'Erro ao salvar perfil');
+      catchAuthAxios(error, 'Erro ao salvar perfil');
     } finally {
       setIsLoading(false);
     }

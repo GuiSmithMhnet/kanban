@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 
 import Table from '@/components/Table';
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 import { formatDateTime } from '@/utils/formatDate';
 import getNameInitials from '@/utils/getNameInitials';
 
@@ -50,8 +51,7 @@ const Convites = ({ convites = [], onConviteCancelado }) => {
         await onConviteCancelado();
       }
     } catch (error) {
-      console.log(error?.response || error);
-      toast.error(error?.response?.data?.mensagem || 'Erro ao cancelar convite');
+      catchAuthAxios(error, 'Erro ao cancelar convite');
     } finally {
       setIsLoading(false);
     }

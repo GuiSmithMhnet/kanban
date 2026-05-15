@@ -22,6 +22,7 @@ import TextField from '@mui/material/TextField';
 
 import Loading from '@/components/Loading';
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 import { ESPACO_ICONES } from './EspacosIcones';
 import { useNavbar } from '@/contexts/NavbarContext';
 
@@ -99,8 +100,7 @@ const EspacoFormulario = ({ modo = 'create', initialValues = defaultValues }) =>
         // Outras checagens
       }
     } catch (error) {
-      console.log(error?.response || error);
-      toast.error(error?.response?.data?.mensagem || 'Erro ao salvar espaço');
+      catchAuthAxios(error, 'Erro ao salvar espaço');
     } finally {
       setIsLoading(false);
     }

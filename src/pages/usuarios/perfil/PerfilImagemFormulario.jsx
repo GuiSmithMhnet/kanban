@@ -15,6 +15,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 
 const maxSizeMb = 5;
 const maxSizeByte = maxSizeMb * 1024 * 1024;
@@ -120,8 +121,7 @@ const PerfilImagemFormulario = ({ src, nome, isLoading, setIsLoading, onImagemAt
         window.dispatchEvent(new CustomEvent('kanban-profile-change', { detail: perfil }));
       }
     } catch (error) {
-      console.log(error?.response || error);
-      toast.error(error?.response?.data?.mensagem || 'Erro ao salvar imagem de perfil');
+      catchAuthAxios(error, 'Erro ao salvar imagem de perfil');
     } finally {
       setIsLoading(false);
     }

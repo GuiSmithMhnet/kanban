@@ -26,6 +26,7 @@ import { toast } from 'react-toastify';
 
 // Utils
 import authAxios from "@/utils/authAxios";
+import catchAuthAxios from '@/utils/catchAxios';
 
 export default function TarefasPage({ espaco }) {
   const [tarefas, setTarefas] = useState([]);
@@ -82,8 +83,7 @@ export default function TarefasPage({ espaco }) {
         const res = await authAxios('post',`/api/espacos/tarefas/listarTarefas?${urlParams.toString()}`);
         setTarefas(res.data.data);
       } catch (error) {
-        console.log(error.response);
-        toast.error(error.response?.data?.mensagem || 'Erro ao listar tarefas');
+        catchAuthAxios(error, 'Erro ao listar tarefas');
       } finally {
         setIsLoading(false);
       }

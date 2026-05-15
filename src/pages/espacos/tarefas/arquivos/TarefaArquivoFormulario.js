@@ -7,6 +7,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 import { useForm } from 'react-hook-form';
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 import { toast } from 'react-toastify';
 
 const TarefaArquivoFormulario = ({ tarefaId, isLoading, setIsLoading, onArquivoInserido }) => {
@@ -36,8 +37,7 @@ const TarefaArquivoFormulario = ({ tarefaId, isLoading, setIsLoading, onArquivoI
             onArquivoInserido?.(res.data.data);
             handleNew();
         } catch (error) {
-            console.log(error);
-            toast.error(error?.response?.data?.mensagem || 'Erro ao inserir arquivo');
+            catchAuthAxios(error, 'Erro ao inserir arquivo');
         } finally {
             setIsLoading(false);
         }

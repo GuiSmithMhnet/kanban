@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 
 // Utils
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 
 const TarefaArquivos = ({ tarefa }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -34,8 +35,7 @@ const TarefaArquivos = ({ tarefa }) => {
                 setArquivos(resArquivos.data.data);
 
             } catch (error) {
-                console.log(error);
-                toast.error(error?.response?.data?.mensagem || 'Erro ao listar arquivos!');
+                catchAuthAxios(error, 'Erro ao listar arquivos!');
             } finally {
                 setIsLoading(false);
             }

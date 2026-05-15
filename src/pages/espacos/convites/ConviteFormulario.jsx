@@ -14,6 +14,7 @@ import TextField from '@mui/material/TextField';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 
 import getNameInitials from '@/utils/getNameInitials';
 
@@ -61,8 +62,7 @@ const ConviteFormulario = ({ mode = 'create', initialValues = defaultValues, onC
         const res = await authAxios('get', `/api/usuarios/buscarUsuarios?${params.toString()}`);
         setUsuarios(res?.data?.data ?? []);
       } catch (error) {
-        console.log(error?.response || error);
-        toast.error(error?.response?.data?.mensagem || 'Erro ao buscar usuários');
+        catchAuthAxios(error, 'Erro ao buscar usuários');
       } finally {
         setIsSearching(false);
       }
@@ -97,8 +97,7 @@ const ConviteFormulario = ({ mode = 'create', initialValues = defaultValues, onC
         await onConviteCriado();
       }
     } catch (error) {
-      console.log(error?.response || error);
-      toast.error(error?.response?.data?.mensagem || 'Erro ao criar convite');
+      catchAuthAxios(error, 'Erro ao criar convite');
     } finally {
       setIsLoading(false);
     }

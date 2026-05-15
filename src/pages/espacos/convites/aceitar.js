@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import Loading from '@/components/Loading';
 import { ESPACO_ICONES } from '@/pages/espacos/EspacosIcones';
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 import { formatDateTime } from '@/utils/formatDate';
 
 const STATUS_LABEL = {
@@ -56,8 +57,7 @@ const AceitarConvitePage = () => {
         const res = await authAxios('get', `/api/espacos/convites/dadosConvite?${params.toString()}`);
         setConvite(res?.data?.data ?? null);
       } catch (error) {
-        console.log(error?.response || error);
-        toast.error(error?.response?.data?.mensagem || 'Erro ao buscar convite');
+        catchAuthAxios(error, 'Erro ao buscar convite');
         setConvite(null);
       } finally {
         setIsLoading(false);
@@ -83,8 +83,7 @@ const AceitarConvitePage = () => {
       setConvite(res?.data?.data ?? null);
       toast.success('Convite aceito');
     } catch (error) {
-      console.log(error?.response || error);
-      toast.error(error?.response?.data?.mensagem || 'Erro ao aceitar convite');
+      catchAuthAxios(error, 'Erro ao aceitar convite');
     } finally {
       setIsSubmitting(false);
     }

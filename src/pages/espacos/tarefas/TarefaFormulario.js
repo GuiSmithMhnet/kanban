@@ -17,6 +17,7 @@ import TarefaArquivos from "./arquivos";
 
 // Utils
 import authAxios from "@/utils/authAxios";
+import catchAuthAxios from '@/utils/catchAxios';
 
 const defaultValues = { titulo: '', descricao: '' }
 
@@ -39,8 +40,7 @@ const TarefaFormulario = ({ mode = 'create', initialValues = null, onClose }) =>
       toast.success('Tarefa criada');
       return true;
     } catch (error) {
-      console.log(error?.response ?? error);
-      toast.error(error.response?.data?.mensagem || 'Erro ao inserir tarefa');
+      catchAuthAxios(error, 'Erro ao inserir tarefa');
       return false;
     } finally {
       setIsLoading(false);
@@ -54,8 +54,7 @@ const TarefaFormulario = ({ mode = 'create', initialValues = null, onClose }) =>
       toast.success('Tarefa editada');
       return true;
     } catch (error) {
-      console.log(error.response);
-      toast.error(error.response?.data?.mensagem || 'Erro ao editar tarefa');
+      catchAuthAxios(error, 'Erro ao editar tarefa');
       return false;
     } finally {
       setIsLoading(false);
@@ -75,8 +74,7 @@ const TarefaFormulario = ({ mode = 'create', initialValues = null, onClose }) =>
       onClose();
       return true;
     } catch (error) {
-      console.log(error.response || error);
-      toast.error(error.response?.data?.mensagem || 'Erro ao deletar tarefa');
+      catchAuthAxios(error, 'Erro ao deletar tarefa');
       return false;
     } finally {
       setIsLoading(false);

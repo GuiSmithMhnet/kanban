@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 
 import Loading from '@/components/Loading';
 import authAxios from '@/utils/authAxios';
+import catchAuthAxios from '@/utils/catchAxios';
 import ConviteFormulario from './ConviteFormulario';
 import Convites from './Convites';
 
@@ -21,8 +22,7 @@ const ConvitesPage = ({ espaco }) => {
       const res = await authAxios('get', `/api/espacos/convites/listarConvites?${params.toString()}`);
       setConvites(res?.data?.data ?? []);
     } catch (error) {
-      console.log(error?.response || error);
-      toast.error(error?.response?.data?.mensagem || 'Erro ao listar convites');
+      catchAuthAxios(error, 'Erro ao listar convites');
     } finally {
       setIsLoading(false);
     }
