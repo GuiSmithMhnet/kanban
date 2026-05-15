@@ -8,7 +8,7 @@ services:
     networks:
      - kanban-shared-services
     ports:
-      - "3001:3000"
+      - "${PRODUCTION_PORT}:3000"
     environment:
       STAGE: production
     env_file:
@@ -29,7 +29,7 @@ services:
      - kanban-shared-services
     working_dir: /app
     ports:
-      - "3002:3000"
+      - "${DEVELOPMENT_PORT}:3000"
     volumes:
       - ./:/app
       - kanban_node_modules:/app/node_modules
@@ -59,7 +59,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - ${POSTGRES_PORT}:5432
+      - "${POSTGRES_HOST_PORT}:${POSTGRES_PORT}"
     volumes:
       - postgres_data_vol:/var/lib/postgresql
     healthcheck:
