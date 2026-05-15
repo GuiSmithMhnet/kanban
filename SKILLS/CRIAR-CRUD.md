@@ -366,6 +366,9 @@ Ao criar SQL:
 
 * usar prepared statements
 * não concatenar valores diretamente na query
+* preferir consultas menores, simples e legíveis, combinadas no JavaScript, em vez de uma consulta grande com muitos `OR`, `EXISTS`, `UNION`, CTEs ou regras condicionais difíceis de ler
+* usar `Promise.all` para executar em paralelo consultas independentes, como validação de registro, validação de vínculo/permissão e busca de listas relacionadas
+* montar ou combinar resultados no JavaScript quando isso deixar a regra mais clara e evitar SQL excessivamente complexo, preservando validação, autorização e performance
 * validar ownership/permissão quando existir relação com usuário
 * respeitar `NOT NULL`
 * respeitar `VARCHAR(n)`
