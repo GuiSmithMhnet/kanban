@@ -70,6 +70,8 @@ const Navbar = () => {
     isSpacesCollapsed,
     setIsSpacesCollapsed,
   } = useNavbar();
+
+  const [espacosAtivos, setEspacosAtivos] = useState([]);
   const [collapsed, setCollapsed] = useState(getInitialCollapsed);
   const currentWidth = collapsed ? collapsedDrawerWidth : drawerWidth;
   const isDarkMode = mode === 'dark';
@@ -82,6 +84,10 @@ const Navbar = () => {
   useEffect(() => {
     localStorage.setItem('kanban-toolbar-collapsed', JSON.stringify(collapsed));
   },[collapsed]);
+
+  useEffect(() => {
+    setEspacosAtivos(espacos.filter(e => e.ativo !== false));
+  },[espacos]);
 
   const renderProfileIcon = () => {
     if (profile?.src) {
@@ -113,7 +119,7 @@ const Navbar = () => {
       );
     }
 
-    if (espacos.length === 0) {
+    if (espacosAtivos.length === 0) {
       return (
         <ListItemButton sx={{ pl: 5, minHeight: 40 }} disabled>
           <ListItemText primary="Nenhum espaço encontrado" />
@@ -121,7 +127,7 @@ const Navbar = () => {
       );
     }
 
-    return espacos.map((espaco) => {
+    return espacosAtivos.map((espaco) => {
       const EspacoIcon = getEspacoIcon(espaco.icon);
       const label = espaco.nome || espaco.sigla || 'Espaço sem nome';
 

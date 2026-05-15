@@ -42,10 +42,9 @@ export const NavbarProvider = ({ children }) => {
         const res = await authAxios('get', '/api/espacos/listarEspacos');
         const responseData = res?.data?.data ?? res?.data ?? [];
         const list = Array.isArray(responseData) ? responseData : responseData?.data;
-        const nextEspacos = Array.isArray(list) ? list.filter((espaco) => espaco?.ativo !== false) : [];
 
-        setEspacos(nextEspacos);
-        return nextEspacos;
+        setEspacos(list);
+        return list;
       } catch (error) {
         catchAuthAxios(error, 'Erro ao listar espaços');
         // console.log(error?.response || error);
