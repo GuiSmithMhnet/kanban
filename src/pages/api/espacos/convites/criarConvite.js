@@ -33,7 +33,7 @@ const emailBody = (data) => {
 }
 
 const buildInviteLink = (id) => {
-    return `${getCurrentUrl()}/espacos/convites?id=${id}`;
+    return `${getCurrentUrl()}/espacos/convites/aceitar?id=${id}`;
 }
 
 const handler = async (req, res) => {
