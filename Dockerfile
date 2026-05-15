@@ -18,9 +18,7 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npm run migrate && npm run dev -- --webpack"]
-
-# CMD ["npm", "run", "dev", "--", "--webpack"]
+CMD ["npm", "run", "dev", "--", "--webpack"]
 
 # =========================
 # BUILD
@@ -55,6 +53,4 @@ COPY --from=builder /app/src ./src
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npm run migrate && npm start"]
-
-# CMD ["npm", "start"]
+CMD ["npm", "start"]
