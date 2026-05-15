@@ -19,7 +19,7 @@ const getMigrationFiles = async () => {
 
     return files
         .filter((fileName) => fileName.toLowerCase().endsWith('.sql'))
-        .sort((a, b) => a.localeCompare(b));
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 };
 
 const getAppliedMigrations = async (db) => {
@@ -49,6 +49,7 @@ const run = async () => {
 
             await db.query('BEGIN');
             try {
+                console.log(`Executando ${fileName}`);
                 await db.query(sql);
                 await db.query(
                     `INSERT INTO ${TABLE_NAME} (nome_arquivo) VALUES ($1)`,
