@@ -52,10 +52,15 @@ const handler = async (req, res) => {
       text: `
         SELECT
           ec.id,
-          ec.status,
+          CASE 
+            WHEN ec.data_expiracao < NOW() AND ec.status = 'PENDENTE' THEN 'EXPIRADO'
+            ELSE ec.status::TEXT
+          END AS status,
           ec.enviar_email,
           ec.data_cadastro,
           ec.data_expiracao,
+          ec.data_aceite,
+          ec.data_recusa,
           u.nome,
           u.email,
           u.username,
@@ -63,7 +68,12 @@ const handler = async (req, res) => {
         FROM espaco_convite ec
         JOIN usuario u ON u.id = ec.id_usuario
         WHERE ec.id_espaco = $1
-        ORDER BY ec.data_cadastro DESC
+        ORDER BY
+          CASE
+            WHEN ec.status = 'PENDENTE' AND ec.data_expiracao >= NOW() THEN 0
+            ELSE 1
+          END,
+          ec.data_cadastro ASC
       `,
       values: [idEspaco],
     });

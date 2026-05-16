@@ -8,10 +8,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
-import ToolTip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
+import { DataGrid } from '@mui/x-data-grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Chip from '@mui/material/Chip';
+
 import { toast } from 'react-toastify';
 
 import Table from '@/components/Table';
@@ -22,7 +26,15 @@ import getNameInitials from '@/utils/getNameInitials';
 
 const Convites = ({ convites = [], onConviteCancelado }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [invite, setInvite] = useState(null);
   const [pendingCancelInvite, setPendingCancelInvite] = useState(null);
+
+  const statusMap = {
+    PENDENTE: 'warning',
+    ACEITO: 'success',
+    RECUSADO: 'error',
+    EXPIRADO: 'secondary'
+  };
 
   const handleOpenCancelDialog = (convite) => {
     setPendingCancelInvite(convite);
@@ -49,6 +61,7 @@ const Convites = ({ convites = [], onConviteCancelado }) => {
 
       if (onConviteCancelado) {
         await onConviteCancelado();
+        handleInviteClose();
       }
     } catch (error) {
       catchAuthAxios(error, 'Erro ao cancelar convite');
@@ -56,84 +69,206 @@ const Convites = ({ convites = [], onConviteCancelado }) => {
       setIsLoading(false);
     }
   };
-  
-  const handleSendAgain = (id) => {
+
+  const handleInviteOpen = (inviteData) => {
+    if (!isLoading) {
+      setInvite(inviteData);
+    }
+  }
+
+  const handleInviteClose = () => {
+    if (!isLoading) {
+      setInvite(null);
+    }
+  }
+
+  const handleSendAgain = (inviteData) => {
     toast.info('Ainda não implementado');
   };
 
-  const tableColumns = {
-    nome: {
-      display: 'Usuário',
-      format: (value, row) => (
-        <Stack direction="row" spacing={1.5} alignItems="center">
-          <Avatar src={row?.src || undefined} alt={value || 'Usuário'} sx={{ width: 32, height: 32 }}>
-            {value ? getNameInitials(value) : '?'}
+  const columns = [
+    {
+      field: 'nome',
+      headerName: 'Nome',
+      flex: 1,
+      renderCell: (params) => (
+        <Stack direction='row' spacing={1.5} align='center'>
+          <Avatar
+            src={params.row?.src || undefined}
+            alt={params.value || 'Usuário'}
+            sx={{ width: 32, height: 32 }}
+          >
+            {params.value ? getNameInitials(params.value) : '?'}
           </Avatar>
-          <span>{value}</span>
+          <Typography variant='body2'>{params.value}</Typography>
         </Stack>
       ),
     },
-    username: {
-      display: 'Username',
-      format: (value) => value ? `@${value}` : '',
+    {
+      field: 'username',
+      headerName: 'Usuário',
+      flex: 1,
+      valueGetter: (_, row) => (row?.username ? `@${row.username}` : ''),
     },
-    email: {
-      display: 'E-mail',
+    {
+      field: 'email',
+      headerName: 'E-mail',
+      flex: 1,
     },
-    status: {
-      display: 'Status',
-    },
-    data_cadastro: {
-      display: 'Cadastro',
-      format: formatDateTime,
-    },
-    enviar_email: {
-      display: 'E-mail enviado',
-      format: (value) => value ? 'Sim' : 'Não',
-    }
-  };
+    {
+      field: 'status',
+      flex: 0.8,
+      headerName: 'Status',
+      renderCell: (params) => {
+        const status = params.value;
 
-  const tableRowActions = {
-    display: 'Ações',
-    actions: {
-      cancel: {
-        key: 'id',
-        action: (id, row) => (
-          <ToolTip title='Cancelar convite'>
-            <span>
-              <IconButton
-                color='error'
-                disabled={row?.status !== 'PENDENTE' || isLoading}
-                onClick={() => handleOpenCancelDialog(row)}
-              >
-                <CancelOutlinedIcon />
-              </IconButton>
-            </span>
-          </ToolTip>
+        return (
+          <Chip
+            label={status}
+            color={statusMap[status] || 'default'}
+            size='small'
+          />
         )
-      },
-      sendAgain: {
-        key: 'id',
-        action: (id, row) => (
-          <ToolTip title='Reenviar e-mail'>
-            <span>
-              <IconButton
-                color='primary'
-                disabled={row?.status !== 'PENDENTE' || isLoading}
-                onClick={() => handleSendAgain(id)}>
-                <ReplayOutlinedIcon />
-              </IconButton>
-            </span>
-          </ToolTip>
-        )
+
       }
+    },
+    {
+      field: 'data_cadastro',
+      headerName: 'Cadastro',
+      flex: 1,
+      valueGetter: (_, row) => (formatDateTime(row.data_cadastro))
+    },
+    {
+      field: 'enviar_email',
+      headerName: 'E-mail enviado',
+      flex: 1,
+      valueGetter: (_, row) => row.enviar_email ? 'Sim' : 'Não',
     }
-  };
+  ];
 
   return (
     <>
-      <Table tableColumns={tableColumns} tableRowActions={tableRowActions} rows={convites} />
+      <Box sx={{ width: '100%' }}>
+        <DataGrid
+          rows={convites}
+          columns={columns}
+          autoHeight
+          hideFooter
+          pageSizeOptions={[convites.length || 5]}
+          localeText={{ noRowsLabel: 'Nenhum registro' }}
+          onRowClick={(params) => { handleInviteOpen(params.row) }}
+        />
+      </Box>
 
+      {/* Visualizar convite */}
+      <Dialog open={Boolean(invite)} onClose={handleInviteClose}>
+        <DialogTitle>Detalhes do convite</DialogTitle>
+        <DialogContent>
+          <Stack spacing={3} sx={{ pt: 1, minWidth: 420 }}>
+            <Stack direction='row' spacing={2} alignItems='center'>
+              <Avatar
+                src={invite?.avatar_public_url || undefined}
+                sx={{ width: 64, height: 64 }}
+              >
+                {getNameInitials(invite?.nome)}
+              </Avatar>
+
+              <Box>
+                <Typography variant='h6'>
+                  {invite?.nome}
+                </Typography>
+
+                <Typography variant='body2' color='text.secondary'>
+                  @{invite?.username}
+                </Typography>
+
+                <Typography variant='body2' color='text.secondary'>
+                  {invite?.email}
+                </Typography>
+              </Box>
+            </Stack>
+
+            <Divider />
+
+            <Stack spacing={2}>
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography variant='body2' color='text.secondary'>
+                  Status
+                </Typography>
+
+                <Chip
+                  label={invite?.status}
+                  color={statusMap[invite?.status] || 'default'}
+                  size='small'
+                />
+              </Stack>
+
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography variant='body2' color='text.secondary'>
+                  E-mail enviado
+                </Typography>
+
+                <Typography variant='body2'>
+                  {invite?.enviar_email ? 'Sim' : 'Não'}
+                </Typography>
+              </Stack>
+
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography variant='body2' color='text.secondary'>
+                  Data do convite
+                </Typography>
+
+                <Typography variant='body2'>
+                  {formatDateTime(invite?.data_cadastro)}
+                </Typography>
+              </Stack>
+
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography variant='body2' color='text.secondary'>
+                  Expira em
+                </Typography>
+
+                <Typography variant='body2'>
+                  {formatDateTime(invite?.data_expiracao)}
+                </Typography>
+              </Stack>
+
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography variant='body2' color='text.secondary'>
+                  Aceito em
+                </Typography>
+
+                <Typography variant='body2'>
+                  {formatDateTime(invite?.data_aceite)}
+                </Typography>
+              </Stack>
+
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography variant='body2' color='text.secondary'>
+                  Recusado em
+                </Typography>
+
+                <Typography variant='body2'>
+                  {formatDateTime(invite?.data_recusa)}
+                </Typography>
+              </Stack>
+            </Stack>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button type='button' onClick={handleInviteClose} disabled={isLoading}>
+            Voltar
+          </Button>
+          <Button type='button' color='error' variant='contained' onClick={() => handleOpenCancelDialog(invite)} disabled={isLoading || invite?.status !== 'PENDENTE'} >
+            Cancelar convite
+          </Button>
+          <Button type='button' color='success' variant='contained' onClick={() => handleSendAgain(invite)} disabled={isLoading || invite?.status !== 'PENDENTE'}>
+            Reenviar e-mail
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Cancelar convite */}
       <Dialog open={Boolean(pendingCancelInvite)} onClose={handleCloseCancelDialog}>
         <DialogTitle>Cancelar convite?</DialogTitle>
         <DialogContent>
