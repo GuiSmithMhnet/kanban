@@ -13,7 +13,7 @@ import WorkspacesIcon from '@mui/icons-material/Workspaces';
 import Loading from '@/components/Loading';
 import authAxios from '@/utils/authAxios';
 import PerfilFormulario from './PerfilFormulario';
-import EspacosInativosLista from './EspacosInativosLista';
+import EspacosInativosLista from './EspacosInativos';
 
 import { useNavbar } from '@/contexts/NavbarContext';
 
