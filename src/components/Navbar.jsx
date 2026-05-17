@@ -37,7 +37,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import hasRouteAcess from '@/utils/hasRouteAccess';
 import { useAppTheme } from "@/contexts/ThemeContext";
 import { useNavbar } from "@/contexts/NavbarContext";
-import { getEspacoIcon } from "@/pages/espacos/EspacosIcones";
+import { getEspacoIcon } from "@/utils/EspacosIcones";
 
 export const drawerWidth = 240;
 const collapsedDrawerWidth = 72;

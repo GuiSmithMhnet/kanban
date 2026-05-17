@@ -10,7 +10,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Table from '@/components/Table';
 import Loading from '@/components/Loading';
 import authAxios from '@/utils/authAxios';
-import { getEspacoIcon } from '@/pages/espacos/EspacosIcones';
+import { getEspacoIcon } from '@/utils/EspacosIcones';
 
 // Contextos
 import { useNavbar } from '@/contexts/NavbarContext';

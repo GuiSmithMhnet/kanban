@@ -23,7 +23,7 @@ import TextField from '@mui/material/TextField';
 import Loading from '@/components/Loading';
 import authAxios from '@/utils/authAxios';
 import catchAuthAxios from '@/utils/catchAxios';
-import { ESPACO_ICONES } from './EspacosIcones';
+import { ESPACO_ICONES } from '../../utils/EspacosIcones';
 import { useNavbar } from '@/contexts/NavbarContext';
 
 const defaultValues = {
