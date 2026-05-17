@@ -109,7 +109,7 @@ const UsuariosPage = ({ espaco }) => {
           rows={usuarios}
           columns={columns}
           autoHeight
-          hideFooter
+          // hideFooter
           pageSizeOptions={[rows.length || 5]}
           onRowClick={(params) => { handleOpenUser(params.row) }}
           localeText={{
@@ -153,7 +153,7 @@ const UsuariosPage = ({ espaco }) => {
 
             <Divider />
 
-            <UsuarioPermissoesFormulario usuario={usuario} />
+            <UsuarioPermissoesFormulario usuario={usuario} espaco={espaco} />
 
           </Stack>
         </DialogContent>

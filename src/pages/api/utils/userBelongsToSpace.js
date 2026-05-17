@@ -56,6 +56,8 @@ const userBelongsToSpace = async (idEspaco, idUser) => {
             belongs: false,
             espaco: null,
         }
+    } finally {
+        client.release();
     }
 };
 
