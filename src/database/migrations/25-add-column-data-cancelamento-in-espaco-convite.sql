@@ -1,0 +1,1 @@
+ALTER TABLE public.espaco_convite ADD COLUMN IF NOT EXISTS data_cancelamento TIMESTAMP DEFAULT NULL;
