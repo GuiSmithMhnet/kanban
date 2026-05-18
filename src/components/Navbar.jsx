@@ -73,21 +73,26 @@ const Navbar = () => {
 
   const [espacosAtivos, setEspacosAtivos] = useState([]);
   const [collapsed, setCollapsed] = useState(getInitialCollapsed);
+  const [meusEspacosOpen, setMeusEspacosOpen] = useState(true);
+  const [compartilhadosOpen, setCompartilhadosOpen] = useState(true);
+
+  const meusEspacos = espacosAtivos.filter((espaco) => Number(espaco.id_usuario) === Number(profile?.id));
+  const espacosCompartilhados = espacosAtivos.filter((espaco) => Number(espaco.id_usuario) !== Number(profile?.id));
   const currentWidth = collapsed ? collapsedDrawerWidth : drawerWidth;
   const isDarkMode = mode === 'dark';
   const themeButtonLabel = isDarkMode ? 'Ativar modo claro' : 'Ativar modo escuro';
   const spacesOpen = !isSpacesCollapsed;
 
-  const selectedSpaceId = router.query?.id ?Number(router.query.id) : null;
+  const selectedSpaceId = router.query?.id ? Number(router.query.id) : null;
   const isOnEspacosPage = router.pathname === '/espacos';
 
   useEffect(() => {
     localStorage.setItem('kanban-toolbar-collapsed', JSON.stringify(collapsed));
-  },[collapsed]);
+  }, [collapsed]);
 
   useEffect(() => {
     setEspacosAtivos(espacos.filter(e => e.ativo !== false));
-  },[espacos]);
+  }, [espacos]);
 
   const renderProfileIcon = () => {
     if (profile?.src) {
@@ -127,25 +132,15 @@ const Navbar = () => {
       );
     }
 
-    return espacosAtivos.map((espaco) => {
-      const EspacoIcon = getEspacoIcon(espaco.icon);
-      const label = espaco.nome || espaco.sigla || 'Espaço sem nome';
+    return (
+      <>
+        {meusEspacos.length > 0 &&
+          renderSpaceGroup('Meus', meusEspacosOpen, setMeusEspacosOpen, meusEspacos)}
 
-      return (
-        <ListItemButton
-          key={espaco.id}
-          component={Link}
-          selected={isOnEspacosPage && selectedSpaceId === Number(espaco.id)}
-          href={`/espacos?id=${espaco.id}`}
-          sx={{ pl: 5, minHeight: 40 }}
-        >
-          <ListItemIcon sx={{ minWidth: 32 }}>
-            <EspacoIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary={label} />
-        </ListItemButton>
-      );
-    });
+        {espacosCompartilhados.length > 0 &&
+          renderSpaceGroup('Compartilhados', compartilhadosOpen, setCompartilhadosOpen, espacosCompartilhados)}
+      </>
+    );
   };
 
   const renderSpacesItem = (item) => {
@@ -202,6 +197,51 @@ const Navbar = () => {
     )
   };
 
+  const renderSpaceGroup = (label, open, setOpen, items) => (
+    <>
+      <ListItemButton
+        onClick={() => setOpen((prev) => !prev)}
+        sx={{ pl: 4, minHeight: 36 }}
+      >
+        <ListItemText
+          primary={label}
+          primaryTypographyProps={{
+            variant: 'caption',
+            color: 'text.secondary',
+            fontWeight: 700,
+          }}
+        />
+
+        {open ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+      </ListItemButton>
+
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          {items.map((espaco) => {
+            const EspacoIcon = getEspacoIcon(espaco.icon);
+            const label = espaco.nome || espaco.sigla || 'Espaço sem nome';
+
+            return (
+              <ListItemButton
+                key={espaco.id}
+                component={Link}
+                selected={isOnEspacosPage && selectedSpaceId === Number(espaco.id)}
+                href={`/espacos?id=${espaco.id}`}
+                sx={{ pl: 5, minHeight: 40 }}
+              >
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <EspacoIcon fontSize="small" />
+                </ListItemIcon>
+
+                <ListItemText primary={label} />
+              </ListItemButton>
+            );
+          })}
+        </List>
+      </Collapse>
+    </>
+  );
+
   return (
     <Drawer
       variant="permanent"
@@ -252,7 +292,7 @@ const Navbar = () => {
                 {renderMenuIcon(item)}
               </ListItemIcon>
               <Box sx={{ opacity: collapsed ? 0 : 1, width: collapsed ? 0 : "auto", transition: "opacity 0.2s ease" }}>
-                <ListItemText primary={item.label} />
+                <ListItemText primary={profile && item.label == 'Perfil' ? `@${profile.username}` : item.label} />
               </Box>
             </ListItemButton>
           )

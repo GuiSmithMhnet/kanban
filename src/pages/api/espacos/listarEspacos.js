@@ -4,15 +4,35 @@ import defaultResponse from '../config/defaultResponse';
 import authMiddleware from '../config/middlewares/authMiddleware';
 
 const handler = async (req, res) => {
+    const client = await db.connect();
     try {
-        const user = req.user;
-        const sql = "SELECT * FROM espaco WHERE id_usuario = $1 ORDER BY id ASC";
-        const spaces = await db.query({ text: sql, values:[user.id]});
 
-        return res.status(200).json(defaultResponse('Segue espaços', spaces.rows));
+        const [ownedSpaces, sharedSpaces] = await Promise.all([
+            client.query({
+                text: "SELECT * FROM espaco WHERE id_usuario = $1 ORDER BY id ASC",
+                values: [req.user.id],
+            }),
+            client.query({
+                text: `
+                    SELECT e.* FROM espaco e
+                    JOIN espaco_usuario eu ON e.id = eu.id_espaco
+                    WHERE eu.id_usuario = $1 AND e.id_usuario != $1
+                    ORDER BY e.id ASC
+                `,
+                values: [req.user.id],
+            }),
+        ]);
+
+        const spaces = [...ownedSpaces.rows, ...sharedSpaces.rows];
+
+        console.log(spaces);
+
+        return res.status(200).json(defaultResponse('Segue espaços', spaces));
     } catch (error) {
         console.log(error);
         return res.status(500).json(defaultResponse('Erro ao listar espaços'));
+    } finally {
+        await client.release();
     }
 };
 
