@@ -77,7 +77,6 @@ const PermissoesFormulario = ({ usuario, espaco }) => {
             // console.log('payload:', payload);
 
             const res = await authAxios('POST', '/api/espacos/usuarios/alterarPermissoes', payload);
-            // console.log(res?.data);
 
             toast.success(res.data.mensagem);
         } catch (error) {

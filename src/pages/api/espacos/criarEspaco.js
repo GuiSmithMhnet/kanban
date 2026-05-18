@@ -43,8 +43,6 @@ const handler = async (req, res) => {
 
         const insertData = buildInsert(tableName, data);
 
-        console.log(insertData);
-
         const spaceResult = await db.query({ text: insertData.text, values: insertData.values});
 
         if(spaceResult.rowCount !== 1){

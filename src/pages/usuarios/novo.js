@@ -33,7 +33,6 @@ export default function NovoUsuarioPage() {
       setIsLoading(true);
       console.log(data);
       const res = await axios.post("/api/usuarios/novo", data);
-      console.log(res?.data);
       toast.success(res.data.mensagem);
       Router.push('/usuarios/login');
     } catch (error) {

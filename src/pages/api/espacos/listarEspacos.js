@@ -25,8 +25,6 @@ const handler = async (req, res) => {
 
         const spaces = [...ownedSpaces.rows, ...sharedSpaces.rows];
 
-        console.log(spaces);
-
         return res.status(200).json(defaultResponse('Segue espaços', spaces));
     } catch (error) {
         console.log(error);
