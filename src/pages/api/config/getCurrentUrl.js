@@ -1,10 +1,17 @@
 const getCurrentUrl = () => {
+
     if(process.env.STAGE == 'production'){
-        return `http://localhost:${process.env.PRODUCTION_PORT}`;
+        return {
+            fullUrl: `http://localhost:${process.env.PRODUCTION_PORT}`,
+            origin: `http://localhost`,
+        }
     }
 
     if(process.env.STAGE == 'development'){
-        return `http://localhost:${process.env.DEVELOPMENT_PORT}`;
+        return {
+            fullUrl: `http://localhost:${process.env.DEVELOPMENT_PORT}`,
+            origin: `http://localhost`,
+        };
     }
 }
 

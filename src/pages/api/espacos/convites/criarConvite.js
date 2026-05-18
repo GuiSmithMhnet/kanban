@@ -29,7 +29,7 @@ const emailBody = (data) => {
         <h1>Convite para espaço </h1>
         <p>Você foi convidado para participar do espaço <strong>${data.nomeEspaco}</strong></p>
         <p>Acesse seu perfil na aba <strong>Convites</strong> para ver o convite:</p>
-        <a href="${getCurrentUrl()}/usuarios/perfil">Clique aqui</a> para acessar seu perfil</a>
+        <a href="${getCurrentUrl().fullUrl}/usuarios/perfil">Clique aqui</a> para acessar seu perfil</a>
     `;
 }
 
