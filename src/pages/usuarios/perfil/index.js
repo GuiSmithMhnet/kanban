@@ -1,7 +1,8 @@
+// Next / React
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { useState } from 'react';
 
+// MUI
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
@@ -10,12 +11,12 @@ import Typography from '@mui/material/Typography';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import WorkspacesIcon from '@mui/icons-material/Workspaces';
 
+// Componentes
 import Loading from '@/components/Loading';
-import authAxios from '@/utils/authAxios';
 import PerfilFormulario from './PerfilFormulario';
-
 import EspacosInativos from './EspacosInativos';
 import Convites from './Convites';
+import PerfilImagemFormulario from './PerfilImagemFormulario';
 
 import { useNavbar } from '@/contexts/NavbarContext';
 
@@ -41,6 +42,7 @@ export default function PerfilPage() {
   const { profile, setProfile, isNavbarLoading } = useNavbar();
 
   const [activeTab, setActiveTab] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleTabChange = (_, value) => {
     setActiveTab(value);
@@ -56,14 +58,27 @@ export default function PerfilPage() {
       {isNavbarLoading ? <Loading /> : <></>}
 
       <Stack spacing={3}>
-        <Box>
-          <Typography component="h1" variant="h3" sx={{ mb: 1 }}>
-            Perfil
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Visualize e edite seus dados básicos.
-          </Typography>
-        </Box>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'flex-start', sm: 'center' }}>
+          <PerfilImagemFormulario
+            src={profile?.src}
+            nome={profile?.nome}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            onImagemAtualizada={setProfile}
+          />
+
+          <Box>
+            <Typography component="h2" variant="h5">
+              {profile?.nome}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              @{profile?.username}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {profile?.email}
+            </Typography>
+          </Box>
+        </Stack>
 
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={activeTab} onChange={handleTabChange} aria-label="Abas da tela de perfil">
@@ -74,7 +89,7 @@ export default function PerfilPage() {
         </Box>
 
         <TabPanel value={activeTab} index={0}>
-          <PerfilFormulario mode="edit" initialValues={profile} onPerfilAtualizado={setProfile} />
+          <PerfilFormulario mode="edit" initialValues={profile} onPerfilAtualizado={setProfile} isLoading={isLoading} setIsLoading={setIsLoading} />
         </TabPanel>
 
         <TabPanel value={activeTab} index={1}>

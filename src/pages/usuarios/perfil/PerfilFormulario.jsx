@@ -21,8 +21,13 @@ const defaultValues = {
   src: null,
 };
 
-const PerfilFormulario = ({ mode = 'edit', initialValues = defaultValues, onPerfilAtualizado }) => {
-  const [isLoading, setIsLoading] = useState(false);
+const PerfilFormulario = ({
+  mode = 'edit',
+  initialValues = defaultValues,
+  onPerfilAtualizado,
+  isLoading,
+  setIsLoading,
+}) => {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({ defaultValues: initialValues });
 
@@ -61,33 +66,9 @@ const PerfilFormulario = ({ mode = 'edit', initialValues = defaultValues, onPerf
     }
   };
 
-  const src = initialValues?.src;
-  const nome = initialValues?.nome;
-  const username = initialValues?.username;
-
   return (
     <Box sx={{ width: '100%', mx: 'auto' }}>
       <Stack spacing={2.5}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'flex-start', sm: 'center' }}>
-          <PerfilImagemFormulario
-            src={src}
-            nome={nome}
-            isLoading={isLoading}
-            setIsLoading={setIsLoading}
-            onImagemAtualizada={onPerfilAtualizado}
-          />
-
-          <Box>
-            <Typography component="h2" variant="h5">
-              {nome || 'Perfil'}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {username ? `@${username}` : 'Dados do usuário autenticado'}
-            </Typography>
-          </Box>
-        </Stack>
-
-        <Divider />
 
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={2.5}>
